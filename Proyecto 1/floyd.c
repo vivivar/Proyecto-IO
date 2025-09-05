@@ -70,6 +70,21 @@ void set_css (GtkCssProvider *cssProvider, GtkWidget *widget){
 Funciones para Window1 1
 */
 
+static void read_matrix_input(void) {
+    if (!current_grid || current_n <= 0) return;
+
+    for (gint r = 1; r <= current_n; r++) {
+        for (gint c = 1; c <= current_n; c++) {
+            GtkWidget *entry = gtk_grid_get_child_at(GTK_GRID(current_grid), c, r);
+            if (!entry) continue;
+
+            const gchar *text = gtk_entry_get_text(GTK_ENTRY(entry));
+            //Falta guarda en array
+            g_print("Valor[%d,%d] = %s\n", r, c, text);
+        }
+    }
+}
+
 static gchar* index_to_label(gint index) {
     GString *s = g_string_new(NULL);
     gint n = index;
