@@ -423,6 +423,42 @@ void on_exitButton_clicked (GtkButton *exitButton1, gpointer data){
 	gtk_main_quit();
 }
 
+// --- Algoritmo de Floyd ---
+
+//Algoritmo de Floyd, se toma la tabla como en arrays(matrix)
+void floyd_algorithm (int current_n, graph matrixP){
+    int matrix[current_n][current_n], i, j, k;
+    for (i = 0; i < current_n; i++)
+        for (j = 0; j < current_n; j++)
+            matrix[i][j] = graph[i][j];
+
+
+    for (k = 0; k < current_n; k++) {
+        for (i = 0; i < current_n; i++) {
+            for (j = 0; j < current_n; j++) {
+                if (matrix[i][k] + matrix[k][j] < matrix[i][j])
+                    matrix[i][j] = matrix[i][k] + matrix[k][j];
+            }
+        }
+    printMatrix(matrix);
+    printf("\n");
+    }
+    printMatrix(matrix);
+}
+
+//Funcion para imprimir la matriz 
+void printMatrix(int matrix[][current_n]) {
+  for (int i = 0; i < current_n; i++) {
+    for (int j = 0; j < current_n; j++) {
+      if (matrix[i][j] == infinito)
+        printf("%4s", "infinito");
+      else
+        printf("%4d", matrix[i][j]);
+    }
+    printf("\n");
+  }
+}
+
 
 //Main
 int main (int argc, char *argv[]){
