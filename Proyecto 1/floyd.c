@@ -1,8 +1,8 @@
 /*
 Proyecto 1 IO -PR01
 Estudiantes:
-Emily -
-Viviana -
+Emily Sanchez -
+Viviana Vargas -
 */
 
 #include <stdio.h>
@@ -17,6 +17,7 @@ Viviana -
 #include <pthread.h>
 #include <stdbool.h>
 
+//--- GTK Variables ----
 //Window 1
 GtkWidget   *window1;
 GtkWidget   *fixed1;
@@ -28,37 +29,24 @@ GtkWidget   *fileLoad;
 GtkWidget   *loadLabel;
 GtkWidget   *exitButton1;
 GtkWidget   *scrollWindow;
-/*//Window 2
-GtkWidget   *window2;
-GtkWidget   *fixed2;
-GtkWidget   *title2;
-GtkWidget   *instruction2;
-GtkWidget   *instruction3;
 GtkWidget   *createSolution;
 GtkWidget   *fileName;
-GtkWidget   *saveProblem;
-GtkWidget   *matrixTable;
-GtkWidget   *exitButton2;*/
-
-static GPtrArray *col_headers = NULL; // índices 1..n (0 sin usar)
-static GPtrArray *row_headers = NULL; // índices 1..n (0 sin usar)
-static gint current_n = 0;
-static gboolean syncing_headers = FALSE;
-
-GtkWidget *current_grid = NULL;
-
+//Builders
 GtkBuilder  *builder;
 GtkCssProvider *cssProvider;
-GtkWidget *pendingWindow;
+//Dynamic Widgets
+GtkWidget *current_grid = NULL;
 
-/* 
-Para ejecutar:
-Abrir la terminal en el folder principal de Mini Proyecto.
-Usar el comando: gcc main.c $(pkg-config --cflags --libs gtk+-3.0) -o main -export-dynamic
-(Esto para que pueda correr con libgtk-3.0)
-Ejecutar el main con el comando en terminal: ./main
-También se puede hacer click en el archivo ejecutable 'Main' en la carpeta principal.
-*/
+//Variables Globales
+static GPtrArray *col_headers = NULL; 
+static GPtrArray *row_headers = NULL; 
+static gint current_n = 0;
+static gboolean syncing_headers = FALSE;
+static int **matrix = NULL;
+
+//Infinito
+#define infinito 9999999
+
 
 //Función para que se utilice el archivo .css como proveedor de estilos.
 void set_css (GtkCssProvider *cssProvider, GtkWidget *widget){
@@ -66,23 +54,30 @@ void set_css (GtkCssProvider *cssProvider, GtkWidget *widget){
 	gtk_style_context_add_provider(styleContext,GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 }
 
-/*
-Funciones para Window1 1
-*/
+// --- Helpers ---
 
-static void read_matrix_input(void) {
-    if (!current_grid || current_n <= 0) return;
+static gchar* value_to_token(int v) {
+    if (v == infinito) return g_strdup("I");
+    return g_strdup_printf("%d", v);
+}
 
-    for (gint r = 1; r <= current_n; r++) {
-        for (gint c = 1; c <= current_n; c++) {
-            GtkWidget *entry = gtk_grid_get_child_at(GTK_GRID(current_grid), c, r);
-            if (!entry) continue;
+static int token_to_value(const gchar *tkn) {
+    if (!tkn || !*tkn) return infinito;
+    if (tkn[0] == 'I' || tkn[0] == 'i') return infinito;
+    return atoi(tkn);
+}
 
-            const gchar *text = gtk_entry_get_text(GTK_ENTRY(entry));
-            //Falta guarda en array
-            g_print("Valor[%d,%d] = %s\n", r, c, text);
-        }
+static inline int value_validator(const gchar *text) {
+    if (!text || !*text){
+        return infinito;
     }
+    if (text[0] == 'I' || text[0] == 'i'){
+        return infinito;
+    }
+    if (atoi(text) < 0){
+        return infinito;
+    }
+    return atoi(text);
 }
 
 static gchar* index_to_label(gint index) {
@@ -111,11 +106,15 @@ static gchar* name_label(const gchar *in, gint index) {
 }
 
 static void on_header_changed(GtkEditable *editable, gpointer user_data) {
-    if (syncing_headers) return;
-
+    if (syncing_headers) {
+        return;
+    }
     gboolean is_col = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(editable), "is_col"));
     gint index        = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(editable), "index"));
-    if (index <= 0 || index > current_n) return;
+    
+    if (index <= 0 || index > current_n) {
+        return;
+    }
 
     const gchar *raw = gtk_entry_get_text(GTK_ENTRY(editable));
     gchar *clean = name_label(raw, index);
@@ -123,7 +122,9 @@ static void on_header_changed(GtkEditable *editable, gpointer user_data) {
     GtkEntry *peer = GTK_ENTRY(
         g_ptr_array_index(is_col ? row_headers : col_headers, index)
     );
-    if (!peer) { g_free(clean); return; }
+    if (!peer) { 
+        g_free(clean); return; 
+    }
 
     syncing_headers = TRUE;
     gtk_entry_set_text(GTK_ENTRY(editable), clean);
@@ -133,15 +134,166 @@ static void on_header_changed(GtkEditable *editable, gpointer user_data) {
     g_free(clean);
 }
 
+/*
+Funciones para Window1 1
+*/
+/*
+void on_contButton_clicked (GtkButton *contButton, gpointer data){
+	const gchar *nodeQ;
+	nodeQ = gtk_entry_get_text(GTK_ENTRY((GtkWidget *) data));
+	bool isNumber = true;
+	int i = 0;
+	for (i=0; i < strlen(nodeQ); i++) {
+		if(!isdigit(nodeQ[i])){
+			isNumber = false;
+		}
+	}
+	if (!isNumber) {
+		errorDialog();
+	} else {
+		if (atoi(nodeQ) > 0 && atoi(nodeQ) < 9){		
+				printf("A");
+		} else {
+			errorDialog();
+		}
+	}
+}*/
+
+
+// --- File Management ----
+
+static gchar* set_extension(const gchar *name) {
+    if (!name) name = "";
+    gchar *trim = g_strstrip(g_strdup(name));
+    if (*trim == '\0') { g_free(trim); return g_strdup("problema.csv"); }
+    gchar *lower = g_ascii_strdown(trim, -1);
+    gboolean has_csv = g_str_has_suffix(lower, ".csv");
+    g_free(lower);
+
+    if (has_csv) return trim;
+
+    gchar *with = g_strconcat(trim, ".csv", NULL);
+    g_free(trim);
+    return with;
+}
+
+static gboolean write_to_csv(const char *filepath) {
+    if (!current_grid || current_n <= 0) return FALSE;
+
+    read_matrix_input();
+
+    FILE *f = fopen(filepath, "w");
+    if (!f) {
+        //g_printerr("No se pudo abrir el archivo para escribir: %s\n", filepath);
+        return FALSE;
+    }
+
+    //Nombres de Columnas
+    fprintf(f, ",");
+    for (int c = 1; c <= current_n; c++) {
+        GtkWidget *e = g_ptr_array_index(col_headers, c);
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY(e));
+        fprintf(f, " %s", name && *name ? name : "");
+        if (c < current_n) {
+            fprintf(f, ",");
+        }
+    }
+    fprintf(f, "\n");
+
+    //Filas
+    for (int r = 1; r <= current_n; r++) {
+        GtkWidget *e = g_ptr_array_index(row_headers, r);
+        const gchar *rname = gtk_entry_get_text(GTK_ENTRY(e));
+        fprintf(f, "%s,", rname && *rname ? rname : "");
+
+        for (int c = 1; c <= current_n; c++) {
+            int v = matrix[r-1][c-1];
+            gchar *tok = value_to_token(v);
+            fprintf(f, "%s", tok);
+            g_free(tok);
+            if (c < current_n) fprintf(f, ",");
+        }
+        fprintf(f, "\n");
+    }
+
+    fclose(f);
+    return TRUE;
+}
+
+
+static void show_error(const char *mensaje) {
+    GtkWidget *md = gtk_message_dialog_new(GTK_WINDOW(window1),
+        GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", mensaje);
+    gtk_dialog_run(GTK_DIALOG(md));
+    gtk_widget_destroy(md);
+}
+
+
+static void read_matrix_input(void) {
+    if (matrix != NULL) {
+        for (int i = 0; i < current_n; i++) free(matrix[i]);
+        free(matrix);
+        matrix = NULL;
+    }
+
+    if (!current_grid || current_n <= 0) {
+        return;
+    }
+
+    matrix = malloc(current_n * sizeof(int*));
+    if (!matrix) { 
+        //g_printerr("Malloc falló. \n"); 
+        return; 
+    }
+
+    for (int i = 0; i < current_n; i++) {
+        matrix[i] = calloc(current_n, sizeof(int));   // <<<< ojo: current_n
+        if (!matrix[i]) {
+            //g_printerr("Calloc falló en la fila %d\n", i);
+            for (int k = 0; k < i; k++) free(matrix[k]);
+            free(matrix);
+            matrix = NULL;
+            return;
+        }
+    }
+
+    for (gint r = 1; r <= current_n; r++) {
+        for (gint c = 1; c <= current_n; c++) {
+            GtkWidget *entry = gtk_grid_get_child_at(GTK_GRID(current_grid), c, r);
+            if (!entry) {
+                matrix[r-1][c-1] = infinito;
+                continue;
+            }
+
+            const gchar *text = gtk_entry_get_text(GTK_ENTRY(entry));
+            int value = value_validator(text);
+            
+            if (r == c) {
+                value = 0;
+            }
+            matrix[r-1][c-1] = value;
+            int x = matrix[r-1][c-1];
+            //g_print("Valor[%d,%d] = %s => %d\n", r, c, text && *text ? text : "(vacio)", value);
+            //printf("Valor[%d,%d] despues => %d\n", r, c,x);
+        }
+    }
+}
+
+
+
 static void build_matrix_grid(GtkWidget *scrolled, gint n) {
-    // Limpieza del grid anterior
+    // Limpiar grid anterior
     if (current_grid) {
         GtkWidget *child = gtk_bin_get_child(GTK_BIN(scrolled));
         if (child) gtk_container_remove(GTK_CONTAINER(scrolled), child);
         current_grid = NULL;
     }
-    if (col_headers) { g_ptr_array_free(col_headers, TRUE); col_headers = NULL; }
-    if (row_headers) { g_ptr_array_free(row_headers, TRUE); row_headers = NULL; }
+    if (col_headers) { 
+        g_ptr_array_free(col_headers, TRUE); col_headers = NULL; 
+    }
+    if (row_headers) { 
+        g_ptr_array_free(row_headers, TRUE); row_headers = NULL; 
+    }
 
     current_n = n;
     col_headers = g_ptr_array_sized_new(n + 1);
@@ -217,7 +369,6 @@ static void build_matrix_grid(GtkWidget *scrolled, gint n) {
     syncing_headers = FALSE;
 }
 
-//Falta que lea la info ingresada
 
 G_MODULE_EXPORT void on_spinNodes_value_changed(GtkSpinButton *spin, gpointer user_data) {
     gint n = gtk_spin_button_get_value_as_int(spin);
@@ -226,29 +377,86 @@ G_MODULE_EXPORT void on_spinNodes_value_changed(GtkSpinButton *spin, gpointer us
 }
 
 
-
-//Muestra la pantalla de pending y carga sus widgets.
-void* pending(){
-	char * command = "gcc pending.c $(pkg-config --cflags --libs gtk+-3.0) -o pending -export-dynamic";
-	system(command);
-	system("./pending");
-}
-
-
 /*
 Funciones para Window1
 */
 
 
+void on_createSolution_clicked (GtkWidget *createSolution, gpointer data){
+    read_matrix_input();
+    const gchar *raw = gtk_entry_get_text(GTK_ENTRY(fileName));
+    gchar *fname = set_extension(raw);
+
+    gchar *dir = g_build_filename(g_get_current_dir(), "Saved_Problems", NULL);
+
+    if (g_mkdir_with_parents(dir, 0700) != 0) {
+        //g_printerr("No se pudo crear la carpeta: %s\n", dir);
+        g_free(dir);
+        g_free(fname);
+        return;
+    }
+
+    gchar *save_path = g_build_filename(dir, fname, NULL);
+
+    if (write_to_csv(save_path)) {
+        //g_print("Archivo guardado: %s\n", save_path);
+        gchar *base = g_path_get_basename(save_path);
+        gtk_entry_set_text(GTK_ENTRY(fileName), base);
+        g_free(base);
+    } else {
+        //g_printerr("Error al guardar: %s\n", save_path);
+    }
+
+    g_free(save_path);
+    g_free(dir);
+    g_free(fname);
+}
+
+
 void on_loadProblem_clicked (GtkWidget *loadProblem, gpointer data){
-	pthread_t thread;
-	pthread_create(&thread, NULL, pending, NULL);
+	
 }
 
 
 //Función de acción para el botón de 'Exit' que cierra todo el programa.
 void on_exitButton_clicked (GtkButton *exitButton1, gpointer data){
 	gtk_main_quit();
+}
+
+// --- Algoritmo de Floyd ---
+
+//Algoritmo de Floyd, se toma la tabla como en arrays(matrix)
+void floyd_algorithm (int current_n, graph matrixP){
+    int matrix[current_n][current_n], i, j, k;
+    for (i = 0; i < current_n; i++)
+        for (j = 0; j < current_n; j++)
+            matrix[i][j] = graph[i][j];
+
+
+    for (k = 0; k < current_n; k++) {
+        for (i = 0; i < current_n; i++) {
+            for (j = 0; j < current_n; j++) {
+                if (matrix[i][k] + matrix[k][j] < matrix[i][j])
+                    matrix[i][j] = matrix[i][k] + matrix[k][j];
+            }
+        }
+    printMatrix(matrix);
+    printf("\n");
+    }
+    printMatrix(matrix);
+}
+
+//Funcion para imprimir la matriz 
+void printMatrix(int matrix[][current_n]) {
+  for (int i = 0; i < current_n; i++) {
+    for (int j = 0; j < current_n; j++) {
+      if (matrix[i][j] == infinito)
+        printf("%4s", "infinito");
+      else
+        printf("%4d", matrix[i][j]);
+    }
+    printf("\n");
+  }
 }
 
 
@@ -273,6 +481,8 @@ int main (int argc, char *argv[]){
 	fileLoad = GTK_WIDGET(gtk_builder_get_object(builder, "fileLoad"));
 	loadLabel = GTK_WIDGET(gtk_builder_get_object(builder, "loadLabel"));
 	scrollWindow = GTK_WIDGET(gtk_builder_get_object(builder, "scrollWindow"));
+    createSolution = GTK_WIDGET(gtk_builder_get_object(builder, "createSolution"));
+    fileName = GTK_WIDGET(gtk_builder_get_object(builder, "fileName"));
 
 	cssProvider = gtk_css_provider_new();
 	gtk_css_provider_load_from_path(cssProvider, "theme.css", NULL);
@@ -284,6 +494,7 @@ int main (int argc, char *argv[]){
 
 	g_signal_connect(exitButton1, "clicked", G_CALLBACK(on_exitButton_clicked), NULL);
 	g_signal_connect(fileLoad, "clicked", G_CALLBACK(on_loadProblem_clicked), NULL);
+    g_signal_connect(createSolution, "clicked", G_CALLBACK(on_createSolution_clicked), NULL);
 	
 	gtk_widget_show(window1);
 	
