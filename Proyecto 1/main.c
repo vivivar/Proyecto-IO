@@ -58,7 +58,7 @@ void* pending(){
 
 //Muestra la pantalla de pending y carga sus widgets.
 void* floyd(){
-	char * command = "gcc floyd.c $(pkg-config --cflags --libs gtk+-3.0) -o floyd -export-dynamic";
+	char * command = "gcc floyd.c $(pkg-config --cflags --libs gtk+-3.0) -lm -export-dynamic -o floyd";
 	system(command);
 	system("./floyd");
 }

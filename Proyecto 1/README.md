@@ -28,7 +28,11 @@ Instalar Glade:
 ```bash
 sudo apt install glade
 ```
-
+Instalar Latex:
+```bash
+    sudo apt-get update
+    sudo apt-get install texlive-latex-base texlive-latex-extra texlive-lang-spanish
+```
 
 ## Uso
 

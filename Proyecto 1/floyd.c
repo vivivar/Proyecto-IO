@@ -1,8 +1,7 @@
-/*
-Proyecto 1 IO -PR01
+/* Proyecto 1 IO -PR01
 Estudiantes:
-Emily -
-Viviana -
+Emily Sanchez -
+Viviana Vargas -
 */
 
 #include <stdio.h>
@@ -16,13 +15,13 @@ Viviana -
 #include <ctype.h>
 #include <pthread.h>
 #include <stdbool.h>
-#include <limits.h>
+#include <stdlib.h>
+#include <errno.h>
 
-#define INF 999
-
+//--- GTK Variables ----
 //Window 1
 GtkWidget   *window1;
-GtkWidget   *fixed1;
+GtkWidget   *fixed2;
 GtkWidget   *title;
 GtkWidget   *description;
 GtkWidget   *instruction;
@@ -31,61 +30,68 @@ GtkWidget   *fileLoad;
 GtkWidget   *loadLabel;
 GtkWidget   *exitButton1;
 GtkWidget   *scrollWindow;
-/*//Window 2
-GtkWidget   *window2;
-GtkWidget   *fixed2;
-GtkWidget   *title2;
-GtkWidget   *instruction2;
-GtkWidget   *instruction3;
 GtkWidget   *createSolution;
 GtkWidget   *fileName;
-GtkWidget   *saveProblem;
-GtkWidget   *matrixTable;
-GtkWidget   *exitButton2;*/
+GtkWidget *editLatexButton;
 
-static GPtrArray *col_headers = NULL; // índices 1..n (0 sin usar)
-static GPtrArray *row_headers = NULL; // índices 1..n (0 sin usar)
-static gint current_n = 0;
-static gboolean syncing_headers = FALSE;
-
-GtkWidget *current_grid = NULL;
-
+//Builders
 GtkBuilder  *builder;
 GtkCssProvider *cssProvider;
-GtkWidget *pendingWindow;
+//Dynamic Widgets
+GtkWidget *current_grid = NULL;
 
-/* 
-Para ejecutar:
-Abrir la terminal en el folder principal de Mini Proyecto.
-Usar el comando: gcc main.c $(pkg-config --cflags --libs gtk+-3.0) -o main -export-dynamic
-(Esto para que pueda correr con libgtk-3.0)
-Ejecutar el main con el comando en terminal: ./main
-También se puede hacer click en el archivo ejecutable 'Main' en la carpeta principal.
-*/
+//Variables Globales
+static GPtrArray *col_headers = NULL; 
+static GPtrArray *row_headers = NULL; 
+static gint current_n = 0;
+static gboolean syncing_headers = FALSE;
+static int **matrix = NULL;
+static int **path_matrix = NULL;
+gchar *last_selected_tex = NULL;
+
+//Infinito 
+#define INFINITO 9999999
+
+// Declaración adelantada de funciones
+static void read_matrix_input(void);
+void on_loadProblem_clicked(GtkWidget *loadProblem, gpointer data);
 
 //Función para que se utilice el archivo .css como proveedor de estilos.
 void set_css (GtkCssProvider *cssProvider, GtkWidget *widget){
-	GtkStyleContext *styleContext = gtk_widget_get_style_context(widget);
-	gtk_style_context_add_provider(styleContext,GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+    GtkStyleContext *styleContext = gtk_widget_get_style_context(widget);
+    gtk_style_context_add_provider(styleContext,GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 }
 
-/*
-Funciones para Window1 1
-*/
+// --- Helpers ---
 
-static void read_matrix_input(void) {
-    if (!current_grid || current_n <= 0) return;
+static gchar* value_to_token(int v) {
+    if (v == INFINITO) return g_strdup("INF");
+    return g_strdup_printf("%d", v);
+}
 
-    for (gint r = 1; r <= current_n; r++) {
-        for (gint c = 1; c <= current_n; c++) {
-            GtkWidget *entry = gtk_grid_get_child_at(GTK_GRID(current_grid), c, r);
-            if (!entry) continue;
+static int token_to_value(const gchar *tkn) {
+    if (!tkn || !*tkn) return INFINITO;
+    if (g_utf8_collate(tkn, "∞") == 0) return INFINITO;
+    if (strcasecmp(tkn, "I") == 0) return INFINITO;
+    if (strcasecmp(tkn, "INF") == 0) return INFINITO;
+    return atoi(tkn);
+}
 
-            const gchar *text = gtk_entry_get_text(GTK_ENTRY(entry));
-            //Falta guarda en array
-            g_print("Valor[%d,%d] = %s\n", r, c, text);
-        }
+static inline int value_validator(const gchar *text) {
+    if (!text || !*text){
+        return INFINITO;
     }
+    if (g_utf8_collate(text, "∞") == 0){
+        return INFINITO;
+    }
+    if (strcasecmp(text, "I") == 0 || strcasecmp(text, "INF") == 0){
+        return INFINITO;
+    }
+    int val = atoi(text);
+    if (val < 0){
+        return INFINITO;
+    }
+    return val;
 }
 
 static gchar* index_to_label(gint index) {
@@ -114,11 +120,15 @@ static gchar* name_label(const gchar *in, gint index) {
 }
 
 static void on_header_changed(GtkEditable *editable, gpointer user_data) {
-    if (syncing_headers) return;
-
+    if (syncing_headers) {
+        return;
+    }
     gboolean is_col = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(editable), "is_col"));
     gint index        = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(editable), "index"));
-    if (index <= 0 || index > current_n) return;
+    
+    if (index <= 0 || index > current_n) {
+        return;
+    }
 
     const gchar *raw = gtk_entry_get_text(GTK_ENTRY(editable));
     gchar *clean = name_label(raw, index);
@@ -126,7 +136,9 @@ static void on_header_changed(GtkEditable *editable, gpointer user_data) {
     GtkEntry *peer = GTK_ENTRY(
         g_ptr_array_index(is_col ? row_headers : col_headers, index)
     );
-    if (!peer) { g_free(clean); return; }
+    if (!peer) { 
+        g_free(clean); return; 
+    }
 
     syncing_headers = TRUE;
     gtk_entry_set_text(GTK_ENTRY(editable), clean);
@@ -136,15 +148,602 @@ static void on_header_changed(GtkEditable *editable, gpointer user_data) {
     g_free(clean);
 }
 
+// --- Algoritmo de Floyd ---
+void floyd_algorithm(int n, int **dist, int **path) {
+    // Inicializar matriz de caminos
+    for (int i = 0; i < n; i++) {
+        for ( int j = 0; j < n; j++) {
+            if (i != j && dist[i][j] != INFINITO) {
+                path[i][j] = i;
+            } else {
+                path[i][j] = -1;
+            }
+        }
+    }
+    
+    // Algoritmo de Floyd
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][k] != INFINITO && dist[k][j] != INFINITO && 
+                    dist[i][j] > dist[i][k] + dist[k][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                    path[i][j] = path[k][j];
+                }
+            }
+        }
+    }
+}
+
+// --- Generación de archivo LaTeX ---
+gboolean generate_latex_report(const char *filename, int n, int **initial_matrix, 
+                              int **final_matrix, int **final_path_matrix, 
+                              GPtrArray *row_headers, GPtrArray *col_headers) {
+    FILE *f = fopen(filename, "w");
+    if (!f) {
+        return FALSE;
+    }
+    
+    // Encabezado del documento LaTeX 
+    fprintf(f, "\\documentclass[12pt]{article}\n");
+    fprintf(f, "\\usepackage[utf8]{inputenc}\n");
+    fprintf(f, "\\usepackage[spanish]{babel}\n");
+    fprintf(f, "\\usepackage{graphicx}\n");
+    fprintf(f, "\\usepackage{amsmath}\n");
+    fprintf(f, "\\usepackage{amssymb}\n");
+    fprintf(f, "\\usepackage{array}\n");
+    fprintf(f, "\\usepackage{xcolor}\n");
+    fprintf(f, "\\usepackage{geometry}\n");
+    fprintf(f, "\\usepackage{fancyhdr}\n");
+    fprintf(f, "\\usepackage{lastpage}\n");
+    fprintf(f, "\\usepackage{booktabs}\n");
+    fprintf(f, "\\usepackage{colortbl}\n");
+    fprintf(f, "\\usepackage{caption}\n");
+    fprintf(f, "\\usepackage{multirow}\n");
+    fprintf(f, "\\geometry{margin=1in}\n\n");
+    fprintf(f, "\\usepackage{float}\n");
+    
+    // Definición de colores
+    fprintf(f, "\\definecolor{lightblue}{RGB}{200,230,255}\n");
+    fprintf(f, "\\definecolor{lightgreen}{RGB}{220,255,220}\n");
+    fprintf(f, "\\definecolor{lightred}{RGB}{255,220,220}\n");
+    fprintf(f, "\\definecolor{lightyellow}{RGB}{255,255,200}\n");
+    
+    // Configuración de encabezados y pies de página
+    fprintf(f, "\\pagestyle{fancy}\n");
+    fprintf(f, "\\fancyhf{}\n");
+    fprintf(f, "\\fancyhead[L]{Algoritmo de Floyd - Solución}\n");
+    fprintf(f, "\\fancyhead[R]{\\thepage\\ de \\pageref{LastPage}}\n");
+    fprintf(f, "\\renewcommand{\\headrulewidth}{0.4pt}\n");
+    fprintf(f, "\\renewcommand{\\footrulewidth}{0.4pt}\n\n");
+    
+    fprintf(f, "\\title{Proyecto 1: Rutas Optimas (Algoritmo de Floyd)}\n");
+    fprintf(f, "\\author{Emily Sanchez \\\\ Viviana Vargas \\\\[1cm] Curso: Investigación de Operaciones \\\\ II Semestre 2025}\n");
+    fprintf(f, "\\date{\\today}\n\n");
+    
+    fprintf(f, "\\begin{document}\n\n");
+    
+    // Portada
+    fprintf(f, "\\maketitle\n");
+    fprintf(f, "\\thispagestyle{empty}\n");
+    fprintf(f, "\\newpage\n");
+    fprintf(f, "\\setcounter{page}{1}\n\n");
+    
+    // Introducción al algoritmo
+    fprintf(f, "\\section{Introducción}\n");
+    fprintf(f, "El algoritmo de Floyd-Warshall es un algoritmo para encontrar los caminos más cortos en un grafo ponderado. Fue publicado por Robert Floyd en 1962.\\\\\n");
+    fprintf(f, "El algoritmo de Floyd se basa en el principio de la Programación Dinámica.\\\\\n");
+    fprintf(f, "\\textbf{Complejidad espacial:} $O(n^2)$\\\\\n");
+    fprintf(f, "\\textbf{Complejidad temporal:} $O(n^3)$\\\\\n");
+    
+    // Grafo
+    fprintf(f, "\\clearpage\n");
+    fprintf(f, "\\section{Descripción del Problema}\n");
+    fprintf(f, "Grafo con %d nodos:\n\n", n);
+    
+    fprintf(f, "\\begin{itemize}\n");
+    for (int i = 0; i < n; i++) {
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1)));
+        fprintf(f, "\\item Nodo %c: %s\n", 'A' + i, name);
+    }
+    fprintf(f, "\\end{itemize}\n\n");
+    
+    // Incluir imagen del grafo
+    fprintf(f, "\\begin{figure}[h!]\n");
+    fprintf(f, "\\centering\n");
+    fprintf(f,"\\includegraphics[width=0.5\\textwidth,keepaspectratio]{grafo.png}\n");
+    fprintf(f, "\\caption{Representación del grafo original}\n");
+    fprintf(f, "\\end{figure}\n\n");
+    
+    // Tabla inicial D(0)
+    fprintf(f, "\\clearpage\n");
+    fprintf(f, "\\section{Procedimiento del Algoritmo}\n");
+    fprintf(f, "\\subsection{Matriz de Distancias Inicial D(0)}\n");
+    fprintf(f, "\\begin{table}[h!]\n");
+    fprintf(f, "\\centering\n");
+    fprintf(f, "\\begin{tabular}{|c|");
+    for (int j = 0; j < n; j++) fprintf(f, "c|");
+    fprintf(f, "}\n\\hline\n");
+    fprintf(f, " & ");
+    for (int j = 0; j < n; j++) {
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(col_headers, j+1)));
+        fprintf(f, "%s", name);
+        if (j < n-1) fprintf(f, " & ");
+    }
+    fprintf(f, " \\\\\\hline\n");
+    
+    for (int i = 0; i < n; i++) {
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1)));
+        fprintf(f, "%s & ", name);
+        for (int j = 0; j < n; j++) {
+            if (initial_matrix[i][j] == INFINITO) {
+                fprintf(f, "$\\infty$");  
+            } else {
+                fprintf(f, "%d", initial_matrix[i][j]);
+            }
+            if (j < n-1) fprintf(f, " & ");
+        }
+        fprintf(f, " \\\\\\hline\n");
+    }
+    fprintf(f, "\\end{tabular}\n");
+    fprintf(f, "\\caption{Matriz de distancias inicial D(0)}\n");
+    fprintf(f, "\\end{table}\n\n");
+    
+    // Tabla P inicial
+    fprintf(f, "\\clearpage\n");
+    fprintf(f, "\\subsection{Matriz de Caminos Inicial P(0)}\n");
+    fprintf(f, "\\begin{table}[h!]\n");
+    fprintf(f, "\\centering\n");
+    fprintf(f, "\\begin{tabular}{|c|");
+    for (int j = 0; j < n; j++) fprintf(f, "c|");
+    fprintf(f, "}\n\\hline\n");
+    fprintf(f, " & ");
+    for (int j = 0; j < n; j++) {
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(col_headers, j+1)));
+        fprintf(f, "%s", name);
+        if (j < n-1) fprintf(f, " & ");
+    }
+    fprintf(f, " \\\\\\hline\n");
+    
+    for (int i = 0; i < n; i++) {
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1)));
+        fprintf(f, "%s & ", name);
+        for (int j = 0; j < n; j++) {
+            if (i == j) {
+                fprintf(f, "-");
+            } else if (initial_matrix[i][j] != INFINITO) {
+                fprintf(f, "%s", gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1))));
+            } else {
+                fprintf(f, "-");
+            }
+            if (j < n-1) fprintf(f, " & ");
+        }
+        fprintf(f, " \\\\\\hline\n");
+    }
+    fprintf(f, "\\end{tabular}\n");
+    fprintf(f, "\\caption{Matriz de caminos inicial P(0)}\n");
+    fprintf(f, "\\end{table}\n\n");
+    
+    // Crear copias para las iteraciones
+    int **dist = malloc(n * sizeof(int*));
+    int **path = malloc(n * sizeof(int*));
+    for (int i = 0; i < n; i++) {
+        dist[i] = malloc(n * sizeof(int));
+        path[i] = malloc(n * sizeof(int));
+        for (int j = 0; j < n; j++) {
+            dist[i][j] = initial_matrix[i][j];
+            if (i != j && initial_matrix[i][j] != INFINITO) {
+                path[i][j] = i;
+            } else {
+                path[i][j] = -1;
+            }
+        }
+    }
+    
+    // Iteraciones del algoritmo
+    fprintf(f, "\\subsection{Iteraciones del Algoritmo}\n");
+    for (int k = 0; k < n; k++) {
+        fprintf(f, "\\clearpage\n");
+        fprintf(f, "\\subsubsection{Iteración %d (k = %d) - Nodo intermedio: %s}\n", 
+                k+1, k+1, gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, k+1))));
+        
+        // Crear matrices temporales para detectar cambios
+        int **old_dist = malloc(n * sizeof(int*));
+        int **old_path = malloc(n * sizeof(int*));
+        for (int i = 0; i < n; i++) {
+            old_dist[i] = malloc(n * sizeof(int));
+            old_path[i] = malloc(n * sizeof(int));
+            for (int j = 0; j < n; j++) {
+                old_dist[i][j] = dist[i][j];
+                old_path[i][j] = path[i][j];
+            }
+        }
+        
+        // Aplicar algoritmo
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][k] != INFINITO && dist[k][j] != INFINITO && 
+                    dist[i][j] > dist[i][k] + dist[k][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                    path[i][j] = path[k][j];
+                }
+            }
+        }
+        
+        // Mostrar matriz D(k+1)
+        fprintf(f, "\\begin{table}[h!]\n");
+        fprintf(f, "\\centering\n");
+        fprintf(f, "\\begin{tabular}{|c|");
+        for (int j = 0; j < n; j++) fprintf(f, "c|");
+        fprintf(f, "}\n\\hline\n");
+        fprintf(f, " & ");
+        for (int j = 0; j < n; j++) {
+            const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(col_headers, j+1)));
+            fprintf(f, "%s", name);
+            if (j < n-1) fprintf(f, " & ");
+        }
+        fprintf(f, " \\\\\\hline\n");
+        
+        for (int i = 0; i < n; i++) {
+            const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1)));
+            fprintf(f, "%s & ", name);
+            for (int j = 0; j < n; j++) {
+                if (dist[i][j] != old_dist[i][j]) {
+                    fprintf(f, "\\cellcolor{lightgreen} ");
+                }
+                
+                if (dist[i][j] == INFINITO) {
+                    fprintf(f, "$\\infty$"); 
+                } else {
+                    fprintf(f, "%d", dist[i][j]);
+                }
+                
+                if (j < n-1) fprintf(f, " & ");
+            }
+            fprintf(f, " \\\\\\hline\n");
+        }
+        fprintf(f, "\\end{tabular}\n");
+        fprintf(f, "\\caption{Matriz de distancias D(%d) - Cambios resaltados en verde}\n", k+1);
+        fprintf(f, "\\end{table}\n\n");
+        
+        // Mostrar matriz P(k+1)
+        fprintf(f, "\\begin{table}[h!]\n");
+        fprintf(f, "\\centering\n");
+        fprintf(f, "\\begin{tabular}{|c|");
+        for (int j = 0; j < n; j++) fprintf(f, "c|");
+        fprintf(f, "}\n\\hline\n");
+        fprintf(f, " & ");
+        for (int j = 0; j < n; j++) {
+            const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(col_headers, j+1)));
+            fprintf(f, "%s", name);
+            if (j < n-1) fprintf(f, " & ");
+        }
+        fprintf(f, " \\\\\\hline\n");
+        
+        for (int i = 0; i < n; i++) {
+            const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1)));
+            fprintf(f, "%s & ", name);
+            for (int j = 0; j < n; j++) {
+                if (path[i][j] != old_path[i][j]) {
+                    fprintf(f, "\\cellcolor{lightblue} ");
+                }
+                
+                if (path[i][j] == -1) {
+                    fprintf(f, "-");
+                } else {
+                    const gchar *node_name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, path[i][j]+1)));
+                    fprintf(f, "%s", node_name);
+                }
+                
+                if (j < n-1) fprintf(f, " & ");
+            }
+            fprintf(f, " \\\\\\hline\n");
+        }
+        fprintf(f, "\\end{tabular}\n");
+        fprintf(f, "\\caption{Matriz de caminos P(%d) - Cambios resaltados en azul}\n", k+1);
+        fprintf(f, "\\end{table}\n\n");
+        
+        // Liberar memoria de las matrices temporales
+        for (int i = 0; i < n; i++) {
+            free(old_dist[i]);
+            free(old_path[i]);
+        }
+        free(old_dist);
+        free(old_path);
+    }
+    
+    // Liberar memoria de las copias
+    for (int i = 0; i < n; i++) {
+        free(dist[i]);
+        free(path[i]);
+    }
+    free(dist);
+    free(path);
+    
+    // Tablas finales
+    fprintf(f, "\\clearpage\n");
+    fprintf(f, "\\section{Resultados Finales}\n");
+    
+    // Matriz de distancias final D(n)
+    fprintf(f, "\\subsection{Matriz de Distancias Final D(%d)}\n", n);
+    fprintf(f, "\\begin{table}[h!]\n");
+    fprintf(f, "\\centering\n");
+    fprintf(f, "\\begin{tabular}{|c|");
+    for (int j = 0; j < n; j++) fprintf(f, "c|");
+    fprintf(f, "}\n\\hline\n");
+    fprintf(f, " & ");
+    for (int j = 0; j < n; j++) {
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(col_headers, j+1)));
+        fprintf(f, "%s", name);
+        if (j < n-1) fprintf(f, " & ");
+    }
+    fprintf(f, " \\\\\\hline\n");
+    
+    for (int i = 0; i < n; i++) {
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1)));
+        fprintf(f, "%s & ", name);
+        for (int j = 0; j < n; j++) {
+            if (final_matrix[i][j] == INFINITO) {
+                fprintf(f, "$\\infty$");  
+            } else {
+                fprintf(f, "%d", final_matrix[i][j]);
+            }
+            if (j < n-1) fprintf(f, " & ");
+        }
+        fprintf(f, " \\\\\\hline\n");
+    }
+    fprintf(f, "\\end{tabular}\n");
+    fprintf(f, "\\caption{Matriz de distancias final D(%d)}\n", n);
+    fprintf(f, "\\end{table}\n\n");
+    
+    // Matriz de caminos final P(n)
+    fprintf(f, "\\clearpage\n");
+    fprintf(f, "\\subsection{Matriz de Caminos Final P(%d)}\n", n);
+    fprintf(f, "\\begin{table}[h!]\n");
+    fprintf(f, "\\centering\n");
+    fprintf(f, "\\begin{tabular}{|c|");
+    for (int j = 0; j < n; j++) fprintf(f, "c|");
+    fprintf(f, "}\n\\hline\n");
+    fprintf(f, " & ");
+    for (int j = 0; j < n; j++) {
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(col_headers, j+1)));
+        fprintf(f, "%s", name);
+        if (j < n-1) fprintf(f, " & ");
+    }
+    fprintf(f, " \\\\\\hline\n");
+    
+    for (int i = 0; i < n; i++) {
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1)));
+        fprintf(f, "%s & ", name);
+        for (int j = 0; j < n; j++) {
+            if (final_path_matrix[i][j] == -1) {
+                fprintf(f, "-");
+            } else {
+                const gchar *node_name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, final_path_matrix[i][j]+1)));
+                fprintf(f, "%s", node_name);
+            }
+            if (j < n-1) fprintf(f, " & ");
+        }
+        fprintf(f, " \\\\\\hline\n");
+    }
+    fprintf(f, "\\end{tabular}\n");
+    fprintf(f, "\\caption{Matriz de caminos final P(%d)}\n", n);
+    fprintf(f, "\\end{table}\n\n");
+    
+    // Rutas óptimas
+    fprintf(f, "\\clearpage\n");
+    fprintf(f, "\\subsection{Rutas Óptimas}\n");
+    fprintf(f, "\\begin{itemize}\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i != j && final_matrix[i][j] != INFINITO) {
+                const gchar *from = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1)));
+                const gchar *to = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, j+1)));
+                
+                fprintf(f, "\\item \\textbf{%s → %s:} Distancia: %d, Ruta: ", from, to, final_matrix[i][j]);
+                
+                // Reconstruir ruta
+                int path_stack[n];
+                int path_index = 0;
+                int current = j;
+                
+                while (current != i) {
+                    path_stack[path_index++] = current;
+                    current = final_path_matrix[i][current];
+                }
+                
+                fprintf(f, "%s", from);
+                for (int k = path_index - 1; k >= 0; k--) {
+                    const gchar *node = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, path_stack[k]+1)));
+                    fprintf(f, " → %s", node);
+                }
+                fprintf(f, "\n");
+            }
+        }
+    }
+    fprintf(f, "\\end{itemize}\n");
+    
+    fprintf(f, "\\end{document}\n");
+    fclose(f);
+    return TRUE;
+}
+
+// Generación de imagen del grafo usando Graphviz 
+static gboolean generate_graph_image(const char *dotfile, const char *pngfile,
+                                     int n, int **matrix, GPtrArray *row_headers) {
+    FILE *dot = fopen(dotfile, "w");
+    if (!dot) return FALSE;
+
+    // Grafo dirigido
+    fprintf(dot, "digraph G {\n");
+    fprintf(dot, "  rankdir=LR;\n"); 
+    fprintf(dot, "  node [shape=circle, style=filled, color=lightblue];\n");
+
+    // Nodos
+    for (int i = 0; i < n; i++) {
+        const gchar *name = gtk_entry_get_text(
+            GTK_ENTRY(g_ptr_array_index(row_headers, i + 1)));
+        fprintf(dot, "  \"%s\";\n", name);
+    }
+
+    // Aristas
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i == j) continue; 
+            int w = matrix[i][j];
+            if (w > 0 && w < INFINITO) {
+                const gchar *from = gtk_entry_get_text(
+                    GTK_ENTRY(g_ptr_array_index(row_headers, i + 1)));
+                const gchar *to = gtk_entry_get_text(
+                    GTK_ENTRY(g_ptr_array_index(row_headers, j + 1)));
+                fprintf(dot, "  \"%s\" -> \"%s\" [label=\"%d\"];\n", from, to, w);
+            }
+        }
+    }
+
+    fprintf(dot, "}\n");
+    fclose(dot);
+
+    // Generar png
+    gchar *cmd = g_strdup_printf("dot -Tpng \"%s\" -o \"%s\"", dotfile, pngfile);
+    int r = system(cmd);
+    g_free(cmd);
+
+    return (r == 0);
+}
+
+
+// --- File Management ----
+
+static gchar* set_extension(const gchar *name) {
+    if (!name) name = "";
+    gchar *trim = g_strstrip(g_strdup(name));
+    if (*trim == '\0') { g_free(trim); return g_strdup("problema.csv"); }
+    gchar *lower = g_ascii_strdown(trim, -1);
+    gboolean has_csv = g_str_has_suffix(lower, ".csv");
+    g_free(lower);
+
+    if (has_csv) return trim;
+
+    gchar *with = g_strconcat(trim, ".csv", NULL);
+    g_free(trim);
+    return with;
+}
+
+static gboolean write_to_csv(const char *filepath) {
+    if (!current_grid || current_n <= 0) return FALSE;
+
+    read_matrix_input();
+
+    FILE *f = fopen(filepath, "w");
+    if (!f) {
+        return FALSE;
+    }
+
+    //Nombres de Columnas
+    fprintf(f, ",");
+    for (int c = 1; c <= current_n; c++) {
+        GtkWidget *e = g_ptr_array_index(col_headers, c);
+        const gchar *name = gtk_entry_get_text(GTK_ENTRY(e));
+        fprintf(f, " %s", name && *name ? name : "");
+        if (c < current_n) {
+            fprintf(f, ",");
+        }
+    }
+    fprintf(f, "\n");
+
+    //Filas
+    for (int r = 1; r <= current_n; r++) {
+        GtkWidget *e = g_ptr_array_index(row_headers, r);
+        const gchar *rname = gtk_entry_get_text(GTK_ENTRY(e));
+        fprintf(f, "%s,", rname && *rname ? rname : "");
+
+        for (int c = 1; c <= current_n; c++) {
+            int v = matrix[r-1][c-1];
+            gchar *tok = value_to_token(v);
+            fprintf(f, "%s", tok);
+            g_free(tok);
+            if (c < current_n) fprintf(f, ",");
+        }
+        fprintf(f, "\n");
+    }
+
+    fclose(f);
+    return TRUE;
+}
+
+static void show_error(const char *mensaje) {
+    GtkWidget *md = gtk_message_dialog_new(GTK_WINDOW(window1),
+        GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", mensaje);
+    gtk_dialog_run(GTK_DIALOG(md));
+    gtk_widget_destroy(md);
+}
+
+static void show_info(const char *mensaje) {
+    GtkWidget *md = gtk_message_dialog_new(GTK_WINDOW(window1), GTK_DIALOG_MODAL, 
+                                          GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", mensaje);
+    gtk_dialog_run(GTK_DIALOG(md));
+    gtk_widget_destroy(md);
+}
+
+static void read_matrix_input(void) {
+    if (matrix != NULL) {
+        for (int i = 0; i < current_n; i++) free(matrix[i]);
+        free(matrix);
+        matrix = NULL;
+    }
+
+    if (!current_grid || current_n <= 0) {
+        return;
+    }
+
+    matrix = malloc(current_n * sizeof(int*));
+    if (!matrix) { 
+        return; 
+    }
+
+    for (int i = 0; i < current_n; i++) {
+        matrix[i] = calloc(current_n, sizeof(int));
+        if (!matrix[i]) {
+            for (int k = 0; k < i; k++) free(matrix[k]);
+            free(matrix);
+            matrix = NULL;
+            return;
+        }
+    }
+
+    for (gint r = 1; r <= current_n; r++) {
+        for (gint c = 1; c <= current_n; c++) {
+            GtkWidget *entry = gtk_grid_get_child_at(GTK_GRID(current_grid), c, r);
+            if (!entry) {
+                matrix[r-1][c-1] = INFINITO;
+                continue;
+            }
+
+            const gchar *text = gtk_entry_get_text(GTK_ENTRY(entry));
+            int value = value_validator(text);
+            
+            if (r == c) {
+                value = 0;
+            }
+            matrix[r-1][c-1] = value;
+        }
+    }
+}
+
 static void build_matrix_grid(GtkWidget *scrolled, gint n) {
-    // Limpieza del grid anterior
+    // Limpiar grid anterior
     if (current_grid) {
         GtkWidget *child = gtk_bin_get_child(GTK_BIN(scrolled));
         if (child) gtk_container_remove(GTK_CONTAINER(scrolled), child);
         current_grid = NULL;
     }
-    if (col_headers) { g_ptr_array_free(col_headers, TRUE); col_headers = NULL; }
-    if (row_headers) { g_ptr_array_free(row_headers, TRUE); row_headers = NULL; }
+    if (col_headers) { 
+        g_ptr_array_free(col_headers, TRUE); col_headers = NULL; 
+    }
+    if (row_headers) { 
+        g_ptr_array_free(row_headers, TRUE); row_headers = NULL; 
+    }
 
     current_n = n;
     col_headers = g_ptr_array_sized_new(n + 1);
@@ -158,7 +757,6 @@ static void build_matrix_grid(GtkWidget *scrolled, gint n) {
     gtk_widget_set_hexpand(grid, TRUE);
     gtk_widget_set_vexpand(grid, TRUE);
 
-    //(0,0)
     gtk_grid_attach(GTK_GRID(grid), gtk_label_new(" "), 0, 0, 1, 1);
 
     // Hacer los headers de columnas editables
@@ -176,31 +774,31 @@ static void build_matrix_grid(GtkWidget *scrolled, gint n) {
         gtk_grid_attach(GTK_GRID(grid), e, c, 0, 1, 1);
     }
 
-    //Headers de filas y celdas
+    // Headers de filas y celdas
     for (gint r = 1; r <= n; r++) {
         GtkWidget *e = gtk_entry_new();
-        gchar *txt = index_to_label(r); 
+        gchar *txt = index_to_label(r);
         gtk_entry_set_text(GTK_ENTRY(e), txt);
         g_free(txt);
-
         g_object_set_data(G_OBJECT(e), "is_col", GINT_TO_POINTER(FALSE));
-        g_object_set_data(G_OBJECT(e), "index",    GINT_TO_POINTER(r));
+        g_object_set_data(G_OBJECT(e), "index", GINT_TO_POINTER(r));
         g_signal_connect(e, "changed", G_CALLBACK(on_header_changed), NULL);
-
         g_ptr_array_index(row_headers, r) = e;
         gtk_grid_attach(GTK_GRID(grid), e, 0, r, 1, 1);
-
+        
         for (gint c = 1; c <= n; c++) {
             GtkWidget *entry = gtk_entry_new();
             gtk_entry_set_width_chars(GTK_ENTRY(entry), 6);
             gtk_entry_set_alignment(GTK_ENTRY(entry), 0.5);
-
+            
             if (r == c) {
                 gtk_entry_set_text(GTK_ENTRY(entry), "0");
                 gtk_editable_set_editable(GTK_EDITABLE(entry), FALSE);
                 gtk_widget_set_sensitive(entry, FALSE);
+            } else {
+                gtk_entry_set_text(GTK_ENTRY(entry), "∞");
             }
-
+            
             g_object_set_data(G_OBJECT(entry), "row", GINT_TO_POINTER(r));
             g_object_set_data(G_OBJECT(entry), "col", GINT_TO_POINTER(c));
             gtk_grid_attach(GTK_GRID(grid), entry, c, r, 1, 1);
@@ -220,115 +818,376 @@ static void build_matrix_grid(GtkWidget *scrolled, gint n) {
     syncing_headers = FALSE;
 }
 
-//Falta que lea la info ingresada
-
 G_MODULE_EXPORT void on_spinNodes_value_changed(GtkSpinButton *spin, gpointer user_data) {
     gint n = gtk_spin_button_get_value_as_int(spin);
     if (n < 1) n = 1;
     build_matrix_grid(scrollWindow, n);
 }
 
+// Función para seleccionar archivo latex
+void on_select_latex_file(GtkWidget *widget, gpointer data) {
+    GtkWidget *dialog;
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+    gint res;
 
+    dialog = gtk_file_chooser_dialog_new("Seleccionar archivo LaTeX",
+                                        GTK_WINDOW(window1),
+                                        action,
+                                        "Cancelar",
+                                        GTK_RESPONSE_CANCEL,
+                                        "Abrir",
+                                        GTK_RESPONSE_ACCEPT,
+                                        NULL);
 
-//Muestra la pantalla de pending y carga sus widgets.
-void* pending(){
-	char * command = "gcc pending.c $(pkg-config --cflags --libs gtk+-3.0) -o pending -export-dynamic";
-	system(command);
-	system("./pending");
+    // Filtro para archivos .tex
+    GtkFileFilter *filter = gtk_file_filter_new();
+    gtk_file_filter_set_name(filter, "Archivos LaTeX (*.tex)");
+    gtk_file_filter_add_pattern(filter, "*.tex");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+
+    // Directorio por defecto a Reports carpeta de archivos
+    gchar *reports_dir = g_build_filename(g_get_current_dir(), "Reports", NULL);
+    if (g_file_test(reports_dir, G_FILE_TEST_IS_DIR)) {
+        gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), reports_dir);
+    }
+    g_free(reports_dir);
+
+    res = gtk_dialog_run(GTK_DIALOG(dialog));
+    
+    if (res == GTK_RESPONSE_ACCEPT) {
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+        if (last_selected_tex) g_free(last_selected_tex);
+        last_selected_tex = gtk_file_chooser_get_filename(chooser);
+        
+        // Preguntar si quiere editar o compilar
+        GtkWidget *choice_dialog = gtk_dialog_new_with_buttons(
+            "¿Qué deseas hacer?",
+            GTK_WINDOW(window1),
+            GTK_DIALOG_MODAL,
+            "Editar",
+            GTK_RESPONSE_YES,
+            "Compilar",
+            GTK_RESPONSE_NO,
+            "Ambos",
+            GTK_RESPONSE_APPLY,
+            NULL
+        );
+        
+        GtkWidget *content_area = gtk_dialog_get_content_area(GTK_DIALOG(choice_dialog));
+        GtkWidget *label = gtk_label_new("Selecciona una opción para el archivo LaTeX:");
+        gtk_container_add(GTK_CONTAINER(content_area), label);
+        gtk_widget_show_all(choice_dialog);
+        
+        gint choice = gtk_dialog_run(GTK_DIALOG(choice_dialog));
+        gtk_widget_destroy(choice_dialog);
+        
+        if (choice == GTK_RESPONSE_YES) {
+            // Solo editar
+            gchar *edit_cmd = g_strdup_printf("xdg-open \"%s\"", last_selected_tex);
+            system(edit_cmd);
+            g_free(edit_cmd);
+        } else if (choice == GTK_RESPONSE_NO) {
+            // Solo compilar
+            compile_latex_file(last_selected_tex);
+        } else if (choice == GTK_RESPONSE_APPLY) {
+            // Editar y luego compilar
+            gchar *edit_cmd = g_strdup_printf("xdg-open \"%s\"", last_selected_tex);
+            system(edit_cmd);
+            g_free(edit_cmd);
+            
+            // Preguntar después de editar si quiere compilar
+            GtkWidget *compile_dialog = gtk_dialog_new_with_buttons(
+                "Recompilar PDF",
+                GTK_WINDOW(window1),
+                GTK_DIALOG_MODAL,
+                "Compilar ahora",
+                GTK_RESPONSE_YES,
+                "Después",
+                GTK_RESPONSE_NO,
+                NULL
+            );
+            
+            GtkWidget *compile_content = gtk_dialog_get_content_area(GTK_DIALOG(compile_dialog));
+            GtkWidget *compile_label = gtk_label_new("¿Deseas compilar el PDF ahora?");
+            gtk_container_add(GTK_CONTAINER(compile_content), compile_label);
+            gtk_widget_show_all(compile_dialog);
+            
+            gint compile_response = gtk_dialog_run(GTK_DIALOG(compile_dialog));
+            gtk_widget_destroy(compile_dialog);
+            
+            if (compile_response == GTK_RESPONSE_YES) {
+                compile_latex_file(last_selected_tex);
+            }
+        }
+    }
+    
+    gtk_widget_destroy(dialog);
 }
 
-
-/*
-Funciones para Window1
-*/
-
-
-void on_loadProblem_clicked (GtkWidget *loadProblem, gpointer data){
-	pthread_t thread;
-	pthread_create(&thread, NULL, pending, NULL);
+// Función para compilar archivo latex
+void compile_latex_file(const gchar *tex_file) {
+    if (!tex_file || !g_file_test(tex_file, G_FILE_TEST_EXISTS)) {
+        show_error("Archivo LaTeX no válido o no existe.");
+        return;
+    }
+    
+    gchar *dir = g_path_get_dirname(tex_file);
+    gchar *base_name = g_path_get_basename(tex_file);
+    
+    // Compilar
+    gchar *cmd = g_strdup_printf("cd \"%s\" && pdflatex -interaction=nonstopmode -halt-on-error \"%s\" > pdflatex_output.txt 2>&1", 
+                                dir, base_name);
+    int result = system(cmd);
+    g_free(cmd);
+    
+    if (result == 0) {
+        // Verificar si se creó el pdf
+        gchar *pdf_file = g_strdup(tex_file);
+        gchar *dot = strrchr(pdf_file, '.');
+        if (dot) *dot = '\0';
+        gchar *actual_pdf = g_strconcat(pdf_file, ".pdf", NULL);
+        g_free(pdf_file);
+        
+        if (g_file_test(actual_pdf, G_FILE_TEST_EXISTS)) {
+            // Abrir el pdf
+            gchar *open_cmd = g_strdup_printf("evince \"%s\" 2>/dev/null &", actual_pdf);
+            system(open_cmd);
+            g_free(open_cmd);
+            
+            show_info("PDF compilado exitosamente.");
+        } else {
+            show_error("Se compiló pero no se generó el PDF. Revisa el archivo LaTeX.");
+        }
+        g_free(actual_pdf);
+    } else {
+        show_error("Error al compilar el archivo LaTeX. Revisa la sintaxis.");
+    }
+    
+    g_free(dir);
+    g_free(base_name);
 }
 
+// Función para el botón de editar latex
+void on_editLatex_clicked(GtkWidget *editLatex, gpointer data) {
+    // Primero verificar si ya hay un archivo seleccionado 
+    if (last_selected_tex && g_file_test(last_selected_tex, G_FILE_TEST_EXISTS)) {
+        GtkWidget *dialog = gtk_dialog_new_with_buttons(
+            "Archivo LaTeX encontrado",
+            GTK_WINDOW(window1),
+            GTK_DIALOG_MODAL,
+            "Usar archivo anterior",
+            GTK_RESPONSE_YES,
+            "Seleccionar nuevo",
+            GTK_RESPONSE_NO,
+            NULL
+        );
+        
+        gchar *message = g_strdup_printf("¿Deseas usar el archivo anterior?\n%s", last_selected_tex);
+        GtkWidget *content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+        GtkWidget *label = gtk_label_new(message);
+        gtk_container_add(GTK_CONTAINER(content), label);
+        gtk_widget_show_all(dialog);
+        
+        gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        g_free(message);
+        
+        if (response == GTK_RESPONSE_YES) {
+            // Usar archivo anterior
+            gchar *edit_cmd = g_strdup_printf("xdg-open \"%s\"", last_selected_tex);
+            system(edit_cmd);
+            g_free(edit_cmd);
+            return;
+        }
+    }
+    
+    // Si no hay archivo anterior o el usuario quiere seleccionar nuevo
+    on_select_latex_file(editLatex, data);
+}
+
+void on_createSolution_clicked (GtkWidget *createSolution, gpointer data){
+    read_matrix_input();
+    
+    if (current_n <= 0 || matrix == NULL) {
+        show_error("No hay datos de matriz para procesar.");
+        return;
+    }
+    
+    // Crear copia de la matriz para el algoritmo
+    int **dist = malloc(current_n * sizeof(int*));
+    int **path = malloc(current_n * sizeof(int*));
+    
+    for (int i = 0; i < current_n; i++) {
+        dist[i] = malloc(current_n * sizeof(int));
+        path[i] = malloc(current_n * sizeof(int));
+        for (int j = 0; j < current_n; j++) {
+            dist[i][j] = matrix[i][j];
+            path[i][j] = -1;
+        }
+    }
+    
+    // Ejecutar algoritmo de Floyd
+    floyd_algorithm(current_n, dist, path);
+    
+    // Generar reporte latex
+    const gchar *raw = gtk_entry_get_text(GTK_ENTRY(fileName));
+    gchar *base_name = g_strdup(raw);
+    if (!base_name || !*base_name) {
+        base_name = g_strdup("floyd_solution");
+    }
+    
+    // Crear directorio para reportes
+    gchar *dir = g_build_filename(g_get_current_dir(), "Reports", NULL);
+    if (g_mkdir_with_parents(dir, 0700) != 0) {
+        show_error("No se pudo crear la carpeta de reportes.");
+        g_free(dir);
+        g_free(base_name);
+        return;
+    }
+
+    gchar *tex_file = g_build_filename(dir, g_strconcat(base_name, ".tex", NULL), NULL);
+    gchar *pdf_file = g_build_filename(dir, g_strconcat(base_name, ".pdf", NULL), NULL);
+
+    // Crear la imagen del grafo
+    gchar *dotfile = g_build_filename(dir, "grafo.dot", NULL);
+    gchar *pngfile = g_build_filename(dir, "grafo.png", NULL);
+    
+    if (!generate_graph_image(dotfile, pngfile, current_n, matrix, row_headers)) {
+        show_error("No se pudo generar la imagen del grafo.");
+    }
+    
+    if (generate_latex_report(tex_file, current_n, matrix, dist, path, row_headers, col_headers)) {
+        // Compilar latex a PDF
+        gchar *cmd = g_strdup_printf("cd \"%s\" && pdflatex -interaction=nonstopmode -halt-on-error \"%s\" > pdflatex_output.txt 2>&1", dir, tex_file);
+        int result = system(cmd);
+        g_free(cmd);
+        
+        // Verificar si se generó el pdf
+        if (result == 0 && g_file_test(pdf_file, G_FILE_TEST_EXISTS)) {
+            // Abrir el PDF con evince
+            gchar *open_cmd = g_strdup_printf("evince \"%s\" 2>/dev/null &", pdf_file);
+            int open_result = system(open_cmd);
+            g_free(open_cmd);
+            
+            if (open_result != 0) {
+                // Si evince falla, intenta abrir con otra app
+                open_cmd = g_strdup_printf("xdg-open \"%s\" 2>/dev/null &", pdf_file);
+                system(open_cmd);
+                g_free(open_cmd);
+            }
+            
+            show_info("Reporte generado y abierto exitosamente.");
+        } else {
+            // Leer el archivo de salida de pdflatex para diagnosticar el error
+            gchar *output_file = g_build_filename(dir, "pdflatex_output.txt", NULL);
+            if (g_file_test(output_file, G_FILE_TEST_EXISTS)) {
+                GError *error = NULL;
+                gchar *contents = NULL;
+                gsize length = 0;
+                
+                if (g_file_get_contents(output_file, &contents, &length, &error)) {
+                    gchar *last_lines = contents;
+                    if (length > 500) {
+                        last_lines = contents + length - 500;
+                    }
+                    
+                    GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(window1),
+                        GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+                        "Error al compilar LaTeX. Últimas líneas del log:\n\n%s", last_lines);
+                    gtk_dialog_run(GTK_DIALOG(dialog));
+                    gtk_widget_destroy(dialog);
+                    
+                    g_free(contents);
+                } else {
+                    show_error("Error al compilar LaTeX. No se pudo leer el archivo de log.");
+                    g_error_free(error);
+                }
+            } else {
+                show_error("Error al compilar LaTeX. No se generó el archivo PDF.");
+            }
+            g_free(output_file);
+        }
+    } else {
+        show_error("Error al generar el documento LaTeX.");
+    }
+    
+    // Liberar memoria
+    for (int i = 0; i < current_n; i++) {
+        free(dist[i]);
+        free(path[i]);
+    }
+    free(dist);
+    free(path);
+    g_free(dir);
+    g_free(base_name);
+    g_free(tex_file);
+    g_free(pdf_file);
+    g_free(dotfile);
+    g_free(pngfile);
+}
+
+// Función para cargar problema 
+void on_loadProblem_clicked(GtkWidget *loadProblem, gpointer data) {
+    show_info("Función de carga no implementada aún");
+}
 
 //Función de acción para el botón de 'Exit' que cierra todo el programa.
 void on_exitButton_clicked (GtkButton *exitButton1, gpointer data){
-	gtk_main_quit();
+    gtk_main_quit();
+    gtk_main_quit();
 }
 
-// ALGORITMO FLOYD
-
-//Algoritmo de Floyd, se toma la tabla como en arrays(matrix)
-void floyd_algorithm (int current_n, graph matrixP){
-    int matrix[current_n][current_n], i, j, k;
-    for (i = 0; i < current_n; i++)
-        for (j = 0; j < current_n; j++)
-            matrix[i][j] = graph[i][j];
-
-
-    for (k = 0; k < current_n; k++) {
-        for (i = 0; i < current_n; i++) {
-            for (j = 0; j < current_n; j++) {
-                if (matrix[i][k] + matrix[k][j] < matrix[i][j])
-                    matrix[i][j] = matrix[i][k] + matrix[k][j];
-            }
-        }
-    printMatrix(matrix);
-    printf("\n");
+// Función para limpiar recursos
+void cleanup_resources() {
+    if (last_selected_tex) {
+        g_free(last_selected_tex);
+        last_selected_tex = NULL;
     }
-    printMatrix(matrix);
 }
-
-//Funcion para imprimir la matriz 
-void printMatrix(int matrix[][current_n]) {
-  for (int i = 0; i < current_n; i++) {
-    for (int j = 0; j < current_n; j++) {
-      if (matrix[i][j] == INF)
-        printf("%4s", "INF");
-      else
-        printf("%4d", matrix[i][j]);
-    }
-    printf("\n");
-  }
-}
-
 
 //Main
 int main (int argc, char *argv[]){
-	gtk_init(&argc, &argv);
-	
-	builder =  gtk_builder_new_from_file ("Floyd.glade");
-	
-	window1 = GTK_WIDGET(gtk_builder_get_object(builder, "window1"));
-	
-	g_signal_connect(window1, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-	
-	gtk_builder_connect_signals(builder, NULL);
-	
-	fixed1 = GTK_WIDGET(gtk_builder_get_object(builder, "fixed1"));
-	title = GTK_WIDGET(gtk_builder_get_object(builder, "title"));
-	description = GTK_WIDGET(gtk_builder_get_object(builder, "description"));
-	instruction = GTK_WIDGET(gtk_builder_get_object(builder, "instruction"));
-	spinNodes = GTK_WIDGET(gtk_builder_get_object(builder, "spinNodes"));
-	exitButton1 = GTK_WIDGET(gtk_builder_get_object(builder, "exitButton1"));
-	fileLoad = GTK_WIDGET(gtk_builder_get_object(builder, "fileLoad"));
-	loadLabel = GTK_WIDGET(gtk_builder_get_object(builder, "loadLabel"));
-	scrollWindow = GTK_WIDGET(gtk_builder_get_object(builder, "scrollWindow"));
+    gtk_init(&argc, &argv);
+    
+    builder =  gtk_builder_new_from_file ("Floyd.glade");
+    
+    window1 = GTK_WIDGET(gtk_builder_get_object(builder, "window1"));
+    
+    g_signal_connect(window1, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    
+    gtk_builder_connect_signals(builder, NULL);
+    
+    fixed2 = GTK_WIDGET(gtk_builder_get_object(builder, "fixed2"));
+    title = GTK_WIDGET(gtk_builder_get_object(builder, "title"));
+    description = GTK_WIDGET(gtk_builder_get_object(builder, "description"));
+    instruction = GTK_WIDGET(gtk_builder_get_object(builder, "instruction"));
+    spinNodes = GTK_WIDGET(gtk_builder_get_object(builder, "spinNodes"));
+    exitButton1 = GTK_WIDGET(gtk_builder_get_object(builder, "exitButton1"));
+    fileLoad = GTK_WIDGET(gtk_builder_get_object(builder, "fileLoad"));
+    loadLabel = GTK_WIDGET(gtk_builder_get_object(builder, "loadLabel"));
+    scrollWindow = GTK_WIDGET(gtk_builder_get_object(builder, "scrollWindow"));
+    createSolution = GTK_WIDGET(gtk_builder_get_object(builder, "createSolution"));
+    fileName = GTK_WIDGET(gtk_builder_get_object(builder, "fileName"));
+    editLatexButton = GTK_WIDGET(gtk_builder_get_object(builder, "editLatexButton"));
 
-	cssProvider = gtk_css_provider_new();
-	gtk_css_provider_load_from_path(cssProvider, "theme.css", NULL);
+    cssProvider = gtk_css_provider_new();
+    gtk_css_provider_load_from_path(cssProvider, "theme.css", NULL);
 
-	set_css(cssProvider, window1);
-	set_css(cssProvider, fileLoad);
-	set_css(cssProvider, exitButton1);
-	set_css(cssProvider, scrollWindow);
+    set_css(cssProvider, window1);
+    set_css(cssProvider, fileLoad);
+    set_css(cssProvider, exitButton1);
+    set_css(cssProvider, scrollWindow);
+    set_css(cssProvider, createSolution);
+    set_css(cssProvider, editLatexButton);
 
-	g_signal_connect(exitButton1, "clicked", G_CALLBACK(on_exitButton_clicked), NULL);
-	g_signal_connect(fileLoad, "clicked", G_CALLBACK(on_loadProblem_clicked), NULL);
-	
-	gtk_widget_show(window1);
-	
-	gtk_main();
+    g_signal_connect(editLatexButton, "clicked", G_CALLBACK(on_editLatex_clicked), NULL);
+    g_signal_connect(exitButton1, "clicked", G_CALLBACK(on_exitButton_clicked), NULL);
+    g_signal_connect(fileLoad, "clicked", G_CALLBACK(on_loadProblem_clicked), NULL);
+    g_signal_connect(createSolution, "clicked", G_CALLBACK(on_createSolution_clicked), NULL);
+    
+    gtk_widget_show(window1);
+    
+    gtk_main();
 
-	return EXIT_SUCCESS;
-	}
-
-
+    return EXIT_SUCCESS;
+}

@@ -11,7 +11,7 @@
   <object class="GtkWindow" id="window1">
     <property name="can-focus">False</property>
     <child>
-      <object class="GtkFixed" id="fixed1">
+      <object class="GtkFixed" id="fixed2">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <child>
@@ -181,6 +181,77 @@
           <packing>
             <property name="x">17</property>
             <property name="y">679</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="editLatexButton">
+            <property name="label" translatable="yes">Edit</property>
+            <property name="width-request">100</property>
+            <property name="height-request">38</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">470</property>
+            <property name="y">763</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkWindow" id="dialog">
+    <property name="can-focus">False</property>
+    <property name="resizable">False</property>
+    <property name="deletable">False</property>
+    <child>
+      <object class="GtkFixed" id="fixed">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkLabel" id="errorLabel1">
+            <property name="width-request">344</property>
+            <property name="height-request">212</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Please only enter numbers between 1 and 8
+                              (1, 2, 3, 4, 5, 6, 7, 8).</property>
+          </object>
+          <packing>
+            <property name="y">25</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="title3">
+            <property name="width-request">108</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Oops!</property>
+            <attributes>
+              <attribute name="font-desc" value="Nimbus Roman, Bold 10"/>
+              <attribute name="weight" value="heavy"/>
+              <attribute name="variant" value="normal"/>
+              <attribute name="scale" value="4"/>
+              <attribute name="size" value="8192"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="x">113</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="tryAgain">
+            <property name="label" translatable="yes">Try Again</property>
+            <property name="width-request">100</property>
+            <property name="height-request">34</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+          </object>
+          <packing>
+            <property name="x">129</property>
+            <property name="y">178</property>
           </packing>
         </child>
       </object>
