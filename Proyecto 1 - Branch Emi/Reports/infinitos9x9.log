@@ -1,12 +1,12 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.9.11)  11 SEP 2025 23:35
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.9.11)  11 SEP 2025 23:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**"/home/viviana/Desktop/IO/Proyecto-IO/Proyecto 1 - Branch Emi/Reports/problem
-a3x3.tex"
+**"/home/viviana/Desktop/IO/Proyecto-IO/Proyecto 1 - Branch Emi/Reports/infinit
+os9x9.tex"
 
-(/home/viviana/Desktop/IO/Proyecto-IO/Proyecto 1 - Branch Emi/Reports/problema3
-x3.tex
+(/home/viviana/Desktop/IO/Proyecto-IO/Proyecto 1 - Branch Emi/Reports/infinitos
+9x9.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -296,11 +296,8 @@ File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count289
 \l__pdf_internal_box=\box57
 )
-(./problema3x3.aux
-LaTeX Info: Redefining \. on input line 8.
-LaTeX Info: Redefining \% on input line 8.
-)
-\openout1 = `problema3x3.aux'.
+No file infinitos9x9.aux.
+\openout1 = `infinitos9x9.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 34.
 LaTeX Font Info:    ... okay on input line 34.
@@ -318,7 +315,6 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 34.
 LaTeX Font Info:    ... okay on input line 34.
 LaTeX Info: Redefining \. on input line 34.
 LaTeX Info: Redefining \% on input line 34.
-
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count290
@@ -396,6 +392,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 42--46
  []
 
 
+LaTeX Warning: Reference `LastPage' on page 1 undefined on input line 46.
+
+
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\headheight}{14.49998pt}.
@@ -404,11 +403,20 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [1]
-<grafo.png, id=14, 278.03876pt x 105.39375pt>
+<grafo.png, id=14, 61.22874pt x 639.38875pt>
 File: grafo.png Graphic file (type png)
 <use grafo.png>
-Package pdftex.def Info: grafo.png  used on input line 58.
-(pdftex.def)             Requested size: 234.8775pt x 89.0351pt.
+Package pdftex.def Info: grafo.png  used on input line 64.
+(pdftex.def)             Requested size: 234.8775pt x 2453.1273pt.
+
+
+LaTeX Warning: Float too large for page by 1827.19728pt on input line 66.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Reference `LastPage' on page 2 undefined on input line 68.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -420,7 +428,10 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [2
 
- <./grafo.png>]
+]
+
+LaTeX Warning: Reference `LastPage' on page 3 undefined on input line 68.
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -429,9 +440,10 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[3
+[3 <./grafo.png>]
 
-]
+LaTeX Warning: Reference `LastPage' on page 4 undefined on input line 89.
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -444,7 +456,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 ]
 
-LaTeX Warning: `!h' float specifier changed to `!ht'.
+LaTeX Warning: Reference `LastPage' on page 5 undefined on input line 109.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -458,6 +470,21 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 ]
 
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Reference `LastPage' on page 6 undefined on input line 246.
+
+
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\headheight}{14.49998pt}.
@@ -465,19 +492,19 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[6]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[7
+[6
 
 ]
 
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Reference `LastPage' on page 7 undefined on input line 267.
+
+
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\headheight}{14.49998pt}.
@@ -485,10 +512,106 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[8
+[7]
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Reference `LastPage' on page 8 undefined on input line 306.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[8]
+
+LaTeX Warning: Reference `LastPage' on page 9 undefined on input line 343.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[9]
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Reference `LastPage' on page 10 undefined on input line 462.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[10]
+
+LaTeX Warning: Reference `LastPage' on page 11 undefined on input line 462.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[11]
+
+LaTeX Warning: Reference `LastPage' on page 12 undefined on input line 462.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[12]
+
+LaTeX Warning: Reference `LastPage' on page 13 undefined on input line 483.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[13
 
 ]
 
+LaTeX Warning: Reference `LastPage' on page 14 undefined on input line 503.
+
+
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\headheight}{14.49998pt}.
@@ -496,11 +619,25 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[9
+[14
+
+]
+
+LaTeX Warning: Reference `LastPage' on page 15 undefined on input line 508.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[15
 
 ] 
 enddocument/afterlastpage: lastpage setting LastPage.
-(./problema3x3.aux
+(./infinitos9x9.aux
 LaTeX Info: Redefining \. on input line 8.
 LaTeX Info: Redefining \% on input line 8.
 )
@@ -510,29 +647,33 @@ L3 programming layer <2024-01-22>
  ***********
 
 
+LaTeX Warning: There were undefined references.
+
+
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package lastpage Warning: Rerun to get the references right on input line 508.
 
  ) 
 Here is how much of TeX's memory you used:
- 7043 strings out of 476120
- 113489 string characters out of 5793657
- 1939975 words of memory out of 5000000
- 28973 multiletter control sequences out of 15000+600000
- 567510 words of font info for 72 fonts, out of 8000000 for 9000
+ 7035 strings out of 476120
+ 113375 string characters out of 5793657
+ 1990975 words of memory out of 5000000
+ 28969 multiletter control sequences out of 15000+600000
+ 566832 words of font info for 70 fonts, out of 8000000 for 9000
  40 hyphenation exceptions out of 8191
- 70i,12n,65p,317b,365s stack positions out of 10000i,1000n,20000p,200000b,200000s
- </home/viviana/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.6
-00pk> </home/viviana/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcbx120
-0.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on problema3x3.pdf (10 pages, 86053 bytes).
+ 70i,12n,65p,318b,365s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on infinitos9x9.pdf (16 pages, 111965 bytes).
 PDF statistics:
- 78 PDF objects out of 1000 (max. 8388607)
- 50 compressed objects within 1 object stream
+ 89 PDF objects out of 1000 (max. 8388607)
+ 56 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

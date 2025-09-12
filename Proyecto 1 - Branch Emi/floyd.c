@@ -1023,43 +1023,7 @@ void compile_latex_file(const gchar *tex_file) {
     g_free(base_name);
 }
 
-// Función para el botón de editar latex
-void on_editLatex_clicked(GtkWidget *editLatex, gpointer data) {
-    // Primero verificar si ya hay un archivo seleccionado 
-    if (last_selected_tex && g_file_test(last_selected_tex, G_FILE_TEST_EXISTS)) {
-        GtkWidget *dialog = gtk_dialog_new_with_buttons(
-            "Archivo LaTeX encontrado",
-            GTK_WINDOW(window1),
-            GTK_DIALOG_MODAL,
-            "Usar archivo anterior",
-            GTK_RESPONSE_YES,
-            "Seleccionar nuevo",
-            GTK_RESPONSE_NO,
-            NULL
-        );
-        
-        gchar *message = g_strdup_printf("¿Deseas usar el archivo anterior?\n%s", last_selected_tex);
-        GtkWidget *content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
-        GtkWidget *label = gtk_label_new(message);
-        gtk_container_add(GTK_CONTAINER(content), label);
-        gtk_widget_show_all(dialog);
-        
-        gint response = gtk_dialog_run(GTK_DIALOG(dialog));
-        gtk_widget_destroy(dialog);
-        g_free(message);
-        
-        if (response == GTK_RESPONSE_YES) {
-            // Usar archivo anterior
-            gchar *edit_cmd = g_strdup_printf("xdg-open \"%s\"", last_selected_tex);
-            system(edit_cmd);
-            g_free(edit_cmd);
-            return;
-        }
-    }
-    
-    // Si no hay archivo anterior o el usuario quiere seleccionar nuevo
-    on_select_latex_file(editLatex, data);
-}
+
 
 
 void file_selected(const char *filename) {
@@ -1333,6 +1297,44 @@ void on_loadToGrid_clicked (GtkWidget *loadToGrid, gpointer data){
 void on_exitButton_clicked (GtkButton *exitButton1, gpointer data){
     gtk_main_quit();
     gtk_main_quit();
+}
+
+// Función para el botón de editar latex
+void on_editLatex_clicked(GtkWidget *editLatex, gpointer data) {
+    // Primero verificar si ya hay un archivo seleccionado 
+    if (last_selected_tex && g_file_test(last_selected_tex, G_FILE_TEST_EXISTS)) {
+        GtkWidget *dialog = gtk_dialog_new_with_buttons(
+            "Archivo LaTeX encontrado",
+            GTK_WINDOW(window1),
+            GTK_DIALOG_MODAL,
+            "Usar archivo anterior",
+            GTK_RESPONSE_YES,
+            "Seleccionar nuevo",
+            GTK_RESPONSE_NO,
+            NULL
+        );
+        
+        gchar *message = g_strdup_printf("¿Deseas usar el archivo anterior?\n%s", last_selected_tex);
+        GtkWidget *content = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+        GtkWidget *label = gtk_label_new(message);
+        gtk_container_add(GTK_CONTAINER(content), label);
+        gtk_widget_show_all(dialog);
+        
+        gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+        gtk_widget_destroy(dialog);
+        g_free(message);
+        
+        if (response == GTK_RESPONSE_YES) {
+            // Usar archivo anterior
+            gchar *edit_cmd = g_strdup_printf("xdg-open \"%s\"", last_selected_tex);
+            system(edit_cmd);
+            g_free(edit_cmd);
+            return;
+        }
+    }
+    
+    // Si no hay archivo anterior o el usuario quiere seleccionar nuevo
+    on_select_latex_file(editLatex, data);
 }
 
 // Función para limpiar recursos

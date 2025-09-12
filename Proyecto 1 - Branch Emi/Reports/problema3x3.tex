@@ -67,9 +67,9 @@ Grafo con 3 nodos:
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & 0 & 6 & 6 \\\hline
-B & 1 & 0 & 4 \\\hline
-C & 5 & 7 & 0 \\\hline
+A & 0 & $\infty$ & $\infty$ \\\hline
+B & 4 & 0 & $\infty$ \\\hline
+C & 5 & 6 & 0 \\\hline
 \end{tabular}
 \caption{Matriz de distancias inicial D(0)}
 \end{table}
@@ -81,87 +81,91 @@ C & 5 & 7 & 0 \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & - & A & A \\\hline
-B & B & - & B \\\hline
+A & - & - & - \\\hline
+B & B & - & - \\\hline
 C & C & C & - \\\hline
 \end{tabular}
 \caption{Matriz de caminos inicial P(0)}
 \end{table}
 
-\subsection{Iteraciones del Algoritmo}
 \clearpage
+\subsection{Iteraciones del Algoritmo}
 \subsubsection{Iteración 1 (k = 1) - Nodo intermedio: A}
+\paragraph{Matriz de Distancias D(1)}
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & 0 & 6 & 6 \\\hline
-B & 1 & 0 & 4 \\\hline
-C & 5 & 7 & 0 \\\hline
+A & 0 & $\infty$ & $\infty$ \\\hline
+B & 4 & 0 & $\infty$ \\\hline
+C & 5 & 6 & 0 \\\hline
 \end{tabular}
 \caption{Matriz de distancias D(1) - Cambios resaltados en verde}
 \end{table}
 
+\paragraph{Matriz de Caminos P(1)}
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & - & A & A \\\hline
-B & B & - & B \\\hline
+A & - & - & - \\\hline
+B & B & - & - \\\hline
 C & C & C & - \\\hline
 \end{tabular}
 \caption{Matriz de caminos P(1) - Cambios resaltados en azul}
 \end{table}
 
-\clearpage
 \subsubsection{Iteración 2 (k = 2) - Nodo intermedio: B}
+\paragraph{Matriz de Distancias D(2)}
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & 0 & 6 & 6 \\\hline
-B & 1 & 0 & 4 \\\hline
-C & 5 & 7 & 0 \\\hline
+A & 0 & $\infty$ & $\infty$ \\\hline
+B & 4 & 0 & $\infty$ \\\hline
+C & 5 & 6 & 0 \\\hline
 \end{tabular}
 \caption{Matriz de distancias D(2) - Cambios resaltados en verde}
 \end{table}
 
+\paragraph{Matriz de Caminos P(2)}
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & - & A & A \\\hline
-B & B & - & B \\\hline
+A & - & - & - \\\hline
+B & B & - & - \\\hline
 C & C & C & - \\\hline
 \end{tabular}
 \caption{Matriz de caminos P(2) - Cambios resaltados en azul}
 \end{table}
 
-\clearpage
 \subsubsection{Iteración 3 (k = 3) - Nodo intermedio: C}
+\paragraph{Matriz de Distancias D(3)}
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & 0 & 6 & 6 \\\hline
-B & 1 & 0 & 4 \\\hline
-C & 5 & 7 & 0 \\\hline
+A & 0 & $\infty$ & $\infty$ \\\hline
+B & 4 & 0 & $\infty$ \\\hline
+C & 5 & 6 & 0 \\\hline
 \end{tabular}
 \caption{Matriz de distancias D(3) - Cambios resaltados en verde}
 \end{table}
 
+\paragraph{Matriz de Caminos P(3)}
 \begin{table}[h!]
 \centering
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & - & A & A \\\hline
-B & B & - & B \\\hline
+A & - & - & - \\\hline
+B & B & - & - \\\hline
 C & C & C & - \\\hline
 \end{tabular}
 \caption{Matriz de caminos P(3) - Cambios resaltados en azul}
@@ -175,9 +179,9 @@ C & C & C & - \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & 0 & 6 & 6 \\\hline
-B & 1 & 0 & 4 \\\hline
-C & 5 & 7 & 0 \\\hline
+A & 0 & $\infty$ & $\infty$ \\\hline
+B & 4 & 0 & $\infty$ \\\hline
+C & 5 & 6 & 0 \\\hline
 \end{tabular}
 \caption{Matriz de distancias final D(3)}
 \end{table}
@@ -189,8 +193,8 @@ C & 5 & 7 & 0 \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & - & A & A \\\hline
-B & B & - & B \\\hline
+A & - & - & - \\\hline
+B & B & - & - \\\hline
 C & C & C & - \\\hline
 \end{tabular}
 \caption{Matriz de caminos final P(3)}
@@ -199,11 +203,8 @@ C & C & C & - \\\hline
 \clearpage
 \subsection{Rutas Óptimas}
 \begin{itemize}
-\item \textbf{A → B:} Distancia: 6, Ruta: A → B
-\item \textbf{A → C:} Distancia: 6, Ruta: A → C
-\item \textbf{B → A:} Distancia: 1, Ruta: B → A
-\item \textbf{B → C:} Distancia: 4, Ruta: B → C
+\item \textbf{B → A:} Distancia: 4, Ruta: B → A
 \item \textbf{C → A:} Distancia: 5, Ruta: C → A
-\item \textbf{C → B:} Distancia: 7, Ruta: C → B
+\item \textbf{C → B:} Distancia: 6, Ruta: C → B
 \end{itemize}
 \end{document}
