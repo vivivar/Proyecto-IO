@@ -1,7 +1,9 @@
 This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex)
  restricted \write18 enabled.
 entering extended mode
-(/home/viviana/Desktop/Proyecto 1 - Branch Emi/Reports/floyd_solution.tex
+
+(/home/viviana/Desktop/IO/Proyecto-IO/Proyecto 1 - Branch Emi/Reports/problema1
+1x11.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -44,7 +46,7 @@ For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/float/float.sty)
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
-(./floyd_solution.aux)
+No file problema11x11.aux.
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
@@ -69,13 +71,10 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [1]
 
-LaTeX Warning: Float too large for page by 182.23862pt on input line 60.
-
-
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
-LaTeX Warning: Reference `LastPage' on page 2 undefined on input line 62.
+LaTeX Warning: Reference `LastPage' on page 2 undefined on input line 70.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -87,7 +86,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [2]
 
-LaTeX Warning: Reference `LastPage' on page 3 undefined on input line 62.
+LaTeX Warning: Reference `LastPage' on page 3 undefined on input line 70.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -99,7 +98,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [3 <./grafo.png>]
 
-LaTeX Warning: Reference `LastPage' on page 4 undefined on input line 77.
+LaTeX Warning: Reference `LastPage' on page 4 undefined on input line 93.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -111,7 +110,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [4]
 
-LaTeX Warning: Reference `LastPage' on page 5 undefined on input line 91.
+LaTeX Warning: Reference `LastPage' on page 5 undefined on input line 115.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -126,7 +125,10 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
-LaTeX Warning: Reference `LastPage' on page 6 undefined on input line 172.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Reference `LastPage' on page 6 undefined on input line 223.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -138,7 +140,22 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [6]
 
-LaTeX Warning: Reference `LastPage' on page 7 undefined on input line 174.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Reference `LastPage' on page 7 undefined on input line 330.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -150,7 +167,22 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [7]
 
-LaTeX Warning: Reference `LastPage' on page 8 undefined on input line 189.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Reference `LastPage' on page 8 undefined on input line 438.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -162,7 +194,22 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [8]
 
-LaTeX Warning: Reference `LastPage' on page 9 undefined on input line 203.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Reference `LastPage' on page 9 undefined on input line 545.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -174,7 +221,16 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [9]
 
-LaTeX Warning: Reference `LastPage' on page 10 undefined on input line 208.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Reference `LastPage' on page 10 undefined on input line 590.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -184,9 +240,129 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[10] 
+[10]
+
+LaTeX Warning: Reference `LastPage' on page 11 undefined on input line 590.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[11]
+
+LaTeX Warning: Reference `LastPage' on page 12 undefined on input line 590.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[12]
+
+LaTeX Warning: Reference `LastPage' on page 13 undefined on input line 590.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[13]
+
+LaTeX Warning: Reference `LastPage' on page 14 undefined on input line 590.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[14]
+
+LaTeX Warning: Reference `LastPage' on page 15 undefined on input line 613.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[15]
+
+LaTeX Warning: Reference `LastPage' on page 16 undefined on input line 635.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[16]
+
+LaTeX Warning: Reference `LastPage' on page 17 undefined on input line 667.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[17]
+
+LaTeX Warning: Reference `LastPage' on page 18 undefined on input line 694.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[18]
+
+LaTeX Warning: Reference `LastPage' on page 19 undefined on input line 721.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[19]
+
+LaTeX Warning: Reference `LastPage' on page 20 undefined on input line 739.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[20] 
 enddocument/afterlastpage: lastpage setting LastPage.
-(./floyd_solution.aux)
+(./problema11x11.aux)
 
 LaTeX Warning: There were undefined references.
 
@@ -194,15 +370,17 @@ LaTeX Warning: There were undefined references.
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
 
-Package lastpage Warning: Rerun to get the references right on input line 208.
+Package lastpage Warning: Rerun to get the references right on input line 739.
 
  )
-(see the transcript file for additional information)</usr/share/texlive/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmsy10.pfb>
-Output written on floyd_solution.pdf (11 pages, 82255 bytes).
-Transcript written on floyd_solution.log.
+(see the transcript file for additional information) </home/viviana/.texlive202
+3/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.600pk> </home/viviana/.texlive
+2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcbx1200.600pk></usr/share/texlive/t
+exmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-d
+ist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmsy10.pfb>
+Output written on problema11x11.pdf (21 pages, 437794 bytes).
+Transcript written on problema11x11.log.
