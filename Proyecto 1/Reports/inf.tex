@@ -7,28 +7,27 @@
 \usepackage{array}
 \usepackage{xcolor}
 \usepackage{geometry}
-\usepackage{fancyhdr}
-\usepackage{lastpage}
 \usepackage{booktabs}
 \usepackage{colortbl}
 \usepackage{caption}
 \usepackage{multirow}
+\usepackage{float}
 \geometry{margin=1in}
 
-\usepackage{float}
 \definecolor{lightblue}{RGB}{200,230,255}
 \definecolor{lightgreen}{RGB}{220,255,220}
 \definecolor{lightred}{RGB}{255,220,220}
 \definecolor{lightyellow}{RGB}{255,255,200}
+\usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{Algoritmo de Floyd - Solución}
-\fancyhead[R]{\thepage\ de \pageref{LastPage}}
+\fancyhead[R]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
 
-\title{Proyecto 1: Rutas Optimas (Algoritmo de Floyd)}
-\author{Emily Sanchez \\ Viviana Vargas \\[1cm] Curso: Investigación de Operaciones \\ II Semestre 2025}
+\title{Proyecto 1: Rutas Óptimas (Algoritmo de Floyd)}
+\author{Emily Sanchez \\ Viviana Vargas}
 \date{\today}
 
 \begin{document}
@@ -67,9 +66,9 @@ Grafo con 3 nodos:
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & 0 & 3 & 6 \\\hline
-B & 8 & 0 & $\infty$ \\\hline
-C & $\infty$ & 5 & 0 \\\hline
+A & 0 & $\infty$ & $\infty$ \\\hline
+B & $\infty$ & 0 & $\infty$ \\\hline
+C & $\infty$ & $\infty$ & 0 \\\hline
 \end{tabular}
 \caption{Matriz de distancias inicial D(0)}
 \end{table}
@@ -81,9 +80,9 @@ C & $\infty$ & 5 & 0 \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & - & A & A \\\hline
-B & B & - & - \\\hline
-C & - & C & - \\\hline
+A & - & - & - \\\hline
+B & - & - & - \\\hline
+C & - & - & - \\\hline
 \end{tabular}
 \caption{Matriz de caminos inicial P(0)}
 \end{table}
@@ -97,9 +96,9 @@ C & - & C & - \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & 0 & 3 & 6 \\\hline
-B & 8 & 0 & \cellcolor{lightgreen} 14 \\\hline
-C & $\infty$ & 5 & 0 \\\hline
+A & 0 & $\infty$ & $\infty$ \\\hline
+B & $\infty$ & 0 & $\infty$ \\\hline
+C & $\infty$ & $\infty$ & 0 \\\hline
 \end{tabular}
 \caption{Matriz de distancias D(1) - Cambios resaltados en verde}
 \end{table}
@@ -110,9 +109,9 @@ C & $\infty$ & 5 & 0 \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & - & A & A \\\hline
-B & B & - & \cellcolor{lightblue} A \\\hline
-C & - & C & - \\\hline
+A & - & - & - \\\hline
+B & - & - & - \\\hline
+C & - & - & - \\\hline
 \end{tabular}
 \caption{Matriz de caminos P(1) - Cambios resaltados en azul}
 \end{table}
@@ -124,9 +123,9 @@ C & - & C & - \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & 0 & 3 & 6 \\\hline
-B & 8 & 0 & 14 \\\hline
-C & \cellcolor{lightgreen} 13 & 5 & 0 \\\hline
+A & 0 & $\infty$ & $\infty$ \\\hline
+B & $\infty$ & 0 & $\infty$ \\\hline
+C & $\infty$ & $\infty$ & 0 \\\hline
 \end{tabular}
 \caption{Matriz de distancias D(2) - Cambios resaltados en verde}
 \end{table}
@@ -137,9 +136,9 @@ C & \cellcolor{lightgreen} 13 & 5 & 0 \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & - & A & A \\\hline
-B & B & - & A \\\hline
-C & \cellcolor{lightblue} B & C & - \\\hline
+A & - & - & - \\\hline
+B & - & - & - \\\hline
+C & - & - & - \\\hline
 \end{tabular}
 \caption{Matriz de caminos P(2) - Cambios resaltados en azul}
 \end{table}
@@ -151,9 +150,9 @@ C & \cellcolor{lightblue} B & C & - \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & 0 & 3 & 6 \\\hline
-B & 8 & 0 & 14 \\\hline
-C & 13 & 5 & 0 \\\hline
+A & 0 & $\infty$ & $\infty$ \\\hline
+B & $\infty$ & 0 & $\infty$ \\\hline
+C & $\infty$ & $\infty$ & 0 \\\hline
 \end{tabular}
 \caption{Matriz de distancias D(3) - Cambios resaltados en verde}
 \end{table}
@@ -164,9 +163,9 @@ C & 13 & 5 & 0 \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & - & A & A \\\hline
-B & B & - & A \\\hline
-C & B & C & - \\\hline
+A & - & - & - \\\hline
+B & - & - & - \\\hline
+C & - & - & - \\\hline
 \end{tabular}
 \caption{Matriz de caminos P(3) - Cambios resaltados en azul}
 \end{table}
@@ -179,9 +178,9 @@ C & B & C & - \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & 0 & 3 & 6 \\\hline
-B & 8 & 0 & 14 \\\hline
-C & 13 & 5 & 0 \\\hline
+A & 0 & $\infty$ & $\infty$ \\\hline
+B & $\infty$ & 0 & $\infty$ \\\hline
+C & $\infty$ & $\infty$ & 0 \\\hline
 \end{tabular}
 \caption{Matriz de distancias final D(3)}
 \end{table}
@@ -193,9 +192,9 @@ C & 13 & 5 & 0 \\\hline
 \begin{tabular}{|c|c|c|c|}
 \hline
  & A & B & C \\\hline
-A & - & A & A \\\hline
-B & B & - & A \\\hline
-C & B & C & - \\\hline
+A & - & - & - \\\hline
+B & - & - & - \\\hline
+C & - & - & - \\\hline
 \end{tabular}
 \caption{Matriz de caminos final P(3)}
 \end{table}
@@ -203,11 +202,6 @@ C & B & C & - \\\hline
 \clearpage
 \subsection{Rutas Óptimas}
 \begin{itemize}
-\item \textbf{A → B:} Distancia: 3, Ruta: A → B
-\item \textbf{A → C:} Distancia: 6, Ruta: A → C
-\item \textbf{B → A:} Distancia: 8, Ruta: B → A
-\item \textbf{B → C:} Distancia: 14, Ruta: B → A → C
-\item \textbf{C → A:} Distancia: 13, Ruta: C → B → A
-\item \textbf{C → B:} Distancia: 5, Ruta: C → B
+\item No hay rutas válidas entre los nodos.
 \end{itemize}
 \end{document}

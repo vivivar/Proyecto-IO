@@ -175,7 +175,7 @@ void floyd_algorithm(int n, int **dist, int **path) {
     }
 }
 
-// --- Generación de archivo LaTeX ---
+// --- Generación de archivo latex ---
 gboolean generate_latex_report(const char *filename, int n, int **initial_matrix, 
                               int **final_matrix, int **final_path_matrix, 
                               GPtrArray *row_headers, GPtrArray *col_headers) {
@@ -184,7 +184,7 @@ gboolean generate_latex_report(const char *filename, int n, int **initial_matrix
         return FALSE;
     }
     
-    // Encabezado del documento LaTeX 
+    // Encabezado del documento latex
     fprintf(f, "\\documentclass[12pt]{article}\n");
     fprintf(f, "\\usepackage[utf8]{inputenc}\n");
     fprintf(f, "\\usepackage[spanish]{babel}\n");
@@ -341,9 +341,9 @@ gboolean generate_latex_report(const char *filename, int n, int **initial_matrix
     }
     
     // Iteraciones del algoritmo
+    fprintf(f, "\\clearpage\n");
     fprintf(f, "\\subsection{Iteraciones del Algoritmo}\n");
     for (int k = 0; k < n; k++) {
-        fprintf(f, "\\clearpage\n");
         fprintf(f, "\\subsubsection{Iteración %d (k = %d) - Nodo intermedio: %s}\n", 
                 k+1, k+1, gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, k+1))));
         
@@ -371,6 +371,7 @@ gboolean generate_latex_report(const char *filename, int n, int **initial_matrix
         }
         
         // Mostrar matriz D(k+1)
+        fprintf(f, "\\paragraph{Matriz de Distancias D(%d)}\n", k+1);
         fprintf(f, "\\begin{table}[h!]\n");
         fprintf(f, "\\centering\n");
         fprintf(f, "\\begin{tabular}{|c|");
@@ -388,6 +389,7 @@ gboolean generate_latex_report(const char *filename, int n, int **initial_matrix
             const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1)));
             fprintf(f, "%s & ", name);
             for (int j = 0; j < n; j++) {
+                // Resaltar cambios con color
                 if (dist[i][j] != old_dist[i][j]) {
                     fprintf(f, "\\cellcolor{lightgreen} ");
                 }
@@ -407,6 +409,7 @@ gboolean generate_latex_report(const char *filename, int n, int **initial_matrix
         fprintf(f, "\\end{table}\n\n");
         
         // Mostrar matriz P(k+1)
+        fprintf(f, "\\paragraph{Matriz de Caminos P(%d)}\n", k+1);
         fprintf(f, "\\begin{table}[h!]\n");
         fprintf(f, "\\centering\n");
         fprintf(f, "\\begin{tabular}{|c|");
@@ -424,6 +427,7 @@ gboolean generate_latex_report(const char *filename, int n, int **initial_matrix
             const gchar *name = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1)));
             fprintf(f, "%s & ", name);
             for (int j = 0; j < n; j++) {
+                // Resaltar cambios con color
                 if (path[i][j] != old_path[i][j]) {
                     fprintf(f, "\\cellcolor{lightblue} ");
                 }
@@ -534,33 +538,50 @@ gboolean generate_latex_report(const char *filename, int n, int **initial_matrix
     fprintf(f, "\\clearpage\n");
     fprintf(f, "\\subsection{Rutas Óptimas}\n");
     fprintf(f, "\\begin{itemize}\n");
+
+    gboolean has_valid_routes = FALSE;
+
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             if (i != j && final_matrix[i][j] != INFINITO) {
                 const gchar *from = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, i+1)));
                 const gchar *to = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, j+1)));
                 
-                fprintf(f, "\\item \\textbf{%s → %s:} Distancia: %d, Ruta: ", from, to, final_matrix[i][j]);
-                
-                // Reconstruir ruta
+                // Reconstruir ruta primero para verificar si es válida
                 int path_stack[n];
                 int path_index = 0;
                 int current = j;
+                gboolean valid_route = TRUE;
                 
-                while (current != i) {
+                while (current != i && current != -1 && path_index < n) {
                     path_stack[path_index++] = current;
                     current = final_path_matrix[i][current];
+                    if (current == -1 && path_index == 0) {
+                        valid_route = FALSE;
+                        break;
+                    }
                 }
                 
-                fprintf(f, "%s", from);
-                for (int k = path_index - 1; k >= 0; k--) {
-                    const gchar *node = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, path_stack[k]+1)));
-                    fprintf(f, " → %s", node);
+                if (valid_route && path_index > 0) {
+                    fprintf(f, "\\item \\textbf{%s → %s:} Distancia: %d, Ruta: ", from, to, final_matrix[i][j]);
+                    fprintf(f, "%s", from);
+                    for (int k = path_index - 1; k >= 0; k--) {
+                        if (path_stack[k] >= 0 && path_stack[k] < n) {
+                            const gchar *node = gtk_entry_get_text(GTK_ENTRY(g_ptr_array_index(row_headers, path_stack[k]+1)));
+                            fprintf(f, " → %s", node);
+                        }
+                    }
+                    fprintf(f, "\n");
+                    has_valid_routes = TRUE;
                 }
-                fprintf(f, "\n");
             }
         }
     }
+
+    if (!has_valid_routes) {
+        fprintf(f, "\\item No hay rutas válidas entre los nodos.\n");
+    }
+
     fprintf(f, "\\end{itemize}\n");
     
     fprintf(f, "\\end{document}\n");

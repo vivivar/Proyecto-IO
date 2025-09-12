@@ -32,6 +32,9 @@ Instalar Latex:
 ```bash
     sudo apt-get update
     sudo apt-get install texlive-latex-base texlive-latex-extra texlive-lang-spanish
+    sudo apt update
+    sudo apt install graphviz texlive-latex-base texlive-latex-extra texlive-fonts-recommended
+
 ```
 
 ## Uso

@@ -3,4 +3,5 @@ digraph G {
   node [shape=circle, style=filled, color=lightblue];
   "A";
   "B";
+  "C";
 }
