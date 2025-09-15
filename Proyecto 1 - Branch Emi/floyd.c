@@ -74,12 +74,21 @@ static gchar* value_to_token(int v) {
     return g_strdup_printf("%d", v);
 }
 
-static int token_to_value(const gchar *tkn) {
-    if (!tkn || !*tkn) return INFINITO;
-    if (g_utf8_collate(tkn, "∞") == 0) return INFINITO;
-    if (strcasecmp(tkn, "I") == 0) return INFINITO;
-    if (strcasecmp(tkn, "INF") == 0) return INFINITO;
-    return atoi(tkn);
+static int token_to_value(const gchar *token) {
+    if (!token || !*token) {
+        return INFINITO;
+    }
+    if (g_utf8_collate(token, "∞") == 0) {
+        return INFINITO;
+    }
+    if (strcasecmp(token, "I") == 0) {
+        return INFINITO;
+    }
+    if (strcasecmp(token, "INF") == 0){
+        return INFINITO;
+    }
+    return atoi(token); 
+    
 }
 
 static inline int value_validator(const gchar *text) {
@@ -229,9 +238,7 @@ void floyd_algorithm(int n, int **dist, int **path) {
 }
 
 // --- Generación de archivo LaTeX ---
-gboolean generate_latex_report(const char *filename, int n, int **initial_matrix, 
-                              int **final_matrix, int **final_path_matrix, 
-                              GPtrArray *row_headers, GPtrArray *col_headers) {
+gboolean generate_latex_report(const char *filename, int n, int **initial_matrix, int **final_matrix, int **final_path_matrix, GPtrArray *row_headers, GPtrArray *col_headers) {
     FILE *f = fopen(filename, "w");
     if (!f) {
         return FALSE;
@@ -286,6 +293,9 @@ gboolean generate_latex_report(const char *filename, int n, int **initial_matrix
     fprintf(f, "\\section{Introducción}\n");
     fprintf(f, "El algoritmo de Floyd-Warshall es un algoritmo para encontrar los caminos más cortos en un grafo ponderado. Fue publicado por Robert Floyd en 1962.\\\\\n");
     fprintf(f, "El algoritmo de Floyd se basa en el principio de la Programación Dinámica.\\\\\n");
+    fprintf(f,"El algoritmo comienza con una tabla llamada G(0) que muestra las distancias directas entre cada nodo. Si dos nodos no están conectados directamente, la tabla marca esa distancia como infinito. Luego verifica si pasar por un nodo intermedio puede hacer que el camino entre dos nodos sea más corto.\\\\\n");
+    fprintf(f,"El proceso se repite hasta que todos los nodos intermedios posibles hayan sido probados (es decir, habrá una tabla G(k) para cada nodo k). Al final, la tabla P muestra la distancia más corta posible entre cada par de nodos.\\\\\n");
+    fprintf(f,"Podemos visualizar estos problemas con distancias entre ciudades: ¿qué pasa si quiero ir directamente de la ciudad A a la ciudad C? ¿Sería más corto ir directamente de A a C o ir de A a B y de B a C?\\\\\n");
     fprintf(f, "\\textbf{Complejidad espacial:} $O(n^2)$\\\\\n");
     fprintf(f, "\\textbf{Complejidad temporal:} $O(n^3)$\\\\\n");
     
@@ -424,7 +434,6 @@ gboolean generate_latex_report(const char *filename, int n, int **initial_matrix
         }
         
         // Mostrar matriz D(k+1)
-        fprintf(f, "\\paragraph{Matriz de Distancias D(%d)}\n", k+1);
         fprintf(f, "\\begin{table}[h!]\n");
         fprintf(f, "\\centering\n");
         fprintf(f, "\\begin{tabular}{|c|");
@@ -462,7 +471,6 @@ gboolean generate_latex_report(const char *filename, int n, int **initial_matrix
         fprintf(f, "\\end{table}\n\n");
         
         // Mostrar matriz P(k+1)
-        fprintf(f, "\\paragraph{Matriz de Caminos P(%d)}\n", k+1);
         fprintf(f, "\\begin{table}[h!]\n");
         fprintf(f, "\\centering\n");
         fprintf(f, "\\begin{tabular}{|c|");
@@ -690,15 +698,21 @@ static gboolean generate_graph_image(const char *dotfile, const char *pngfile,
 // --- File Management ----
 
 static gchar* set_extension(const gchar *name) {
-    if (!name) name = "";
+    if (!name) {
+        name = "";
+    }
     gchar *trim = g_strstrip(g_strdup(name));
-    if (*trim == '\0') { g_free(trim); return g_strdup("problema.csv"); }
+    if (*trim == '\0') { 
+        g_free(trim); 
+        return g_strdup("problema.csv"); 
+    }
     gchar *lower = g_ascii_strdown(trim, -1);
     gboolean has_csv = g_str_has_suffix(lower, ".csv");
     g_free(lower);
 
-    if (has_csv) return trim;
-
+    if (has_csv) {
+        return trim;
+    }
     gchar *with = g_strconcat(trim, ".csv", NULL);
     g_free(trim);
     return with;
@@ -777,7 +791,7 @@ static void build_matrix_grid(GtkWidget *scrolled, int n) {
     if (row_headers) { 
         g_ptr_array_free(row_headers, TRUE); row_headers = NULL; 
     }
-
+    //gtk_entry_set_text(GTK_ENTRY(fileName), "");
     current_n = n;
     col_headers = g_ptr_array_sized_new(n+1);
     row_headers = g_ptr_array_sized_new(n+1);
@@ -1006,7 +1020,7 @@ void compile_latex_file(const gchar *tex_file) {
         
         if (g_file_test(actual_pdf, G_FILE_TEST_EXISTS)) {
             // Abrir el pdf
-            gchar *open_cmd = g_strdup_printf("evince \"%s\" 2>/dev/null &", actual_pdf);
+            gchar *open_cmd = g_strdup_printf("evince --presentation \"%s\" 2>/dev/null &", actual_pdf);
             system(open_cmd);
             g_free(open_cmd);
             
@@ -1167,7 +1181,7 @@ void on_createSolution_clicked (GtkWidget *createSolution, gpointer data){
         // Verificar si se generó el pdf
         if (result == 0 && g_file_test(pdf_file, G_FILE_TEST_EXISTS)) {
             // Abrir el PDF con evince
-            gchar *open_cmd = g_strdup_printf("evince \"%s\" 2>/dev/null &", pdf_file);
+            gchar *open_cmd = g_strdup_printf("evince --presentation \"%s\" 2>/dev/null &", pdf_file);
             int open_result = system(open_cmd);
             g_free(open_cmd);
             
@@ -1285,6 +1299,7 @@ void on_loadToGrid_clicked (GtkWidget *loadToGrid, gpointer data){
             g_free(filepath); 
             filepath = NULL; 
         }
+        //gtk_entry_set_text(GTK_ENTRY(fileName), "");
         filepath = g_strdup(filename);
         file_selected(filename);
         gchar *basename = g_path_get_basename(filename);
@@ -1370,6 +1385,8 @@ int main (int argc, char *argv[]){
     fileName = GTK_WIDGET(gtk_builder_get_object(builder, "fileName"));
     loadToGrid = GTK_WIDGET(gtk_builder_get_object(builder, "loadToGrid"));
     saveProblem = GTK_WIDGET(gtk_builder_get_object(builder, "saveProblem"));
+    editLatexButton = GTK_WIDGET(gtk_builder_get_object(builder, "editLatexButton"));
+
 
     cssProvider = gtk_css_provider_new();
     gtk_css_provider_load_from_path(cssProvider, "theme.css", NULL);

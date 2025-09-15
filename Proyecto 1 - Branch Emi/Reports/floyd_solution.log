@@ -1,9 +1,12 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.9.11)  11 SEP 2025 23:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.9.11)  12 SEP 2025 11:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**"/home/viviana/Desktop/Proyecto 1 - Branch Emi/Reports/floyd_solution.tex"
-(/home/viviana/Desktop/Proyecto 1 - Branch Emi/Reports/floyd_solution.tex
+**"/home/viviana/Desktop/IO/Proyecto-IO/Proyecto 1 - Branch Emi/Reports/floyd_s
+olution.tex"
+
+(/home/viviana/Desktop/IO/Proyecto-IO/Proyecto 1 - Branch Emi/Reports/floyd_sol
+ution.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -388,12 +391,9 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-Underfull \hbox (badness 10000) in paragraph at lines 42--46
+Underfull \hbox (badness 10000) in paragraph at lines 42--49
 
  []
-
-
-LaTeX Warning: Reference `LastPage' on page 1 undefined on input line 46.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -404,20 +404,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [1]
-<grafo.png, id=14, 59.22125pt x 203.76125pt>
+<grafo.png, id=14, 169.63374pt x 160.6pt>
 File: grafo.png Graphic file (type png)
 <use grafo.png>
-Package pdftex.def Info: grafo.png  used on input line 58.
-(pdftex.def)             Requested size: 234.8775pt x 808.16864pt.
-
-
-LaTeX Warning: Float too large for page by 182.23862pt on input line 60.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-LaTeX Warning: Reference `LastPage' on page 2 undefined on input line 62.
+Package pdftex.def Info: grafo.png  used on input line 62.
+(pdftex.def)             Requested size: 234.8775pt x 222.37808pt.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -429,10 +420,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [2
 
-]
-
-LaTeX Warning: Reference `LastPage' on page 3 undefined on input line 62.
-
+ <./grafo.png>]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -441,10 +429,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[3 <./grafo.png>]
+[3
 
-LaTeX Warning: Reference `LastPage' on page 4 undefined on input line 77.
-
+]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -457,7 +444,16 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 ]
 
-LaTeX Warning: Reference `LastPage' on page 5 undefined on input line 91.
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -471,11 +467,14 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 ]
 
-LaTeX Warning: `!h' float specifier changed to `!ht'.
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
 
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-LaTeX Warning: Reference `LastPage' on page 6 undefined on input line 172.
-
+[6]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -484,24 +483,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[6
+[7
 
 ]
-
-LaTeX Warning: Reference `LastPage' on page 7 undefined on input line 174.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[7]
-
-LaTeX Warning: Reference `LastPage' on page 8 undefined on input line 189.
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -514,9 +498,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 ]
 
-LaTeX Warning: Reference `LastPage' on page 9 undefined on input line 203.
-
-
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\headheight}{14.49998pt}.
@@ -525,20 +506,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [9
-
-]
-
-LaTeX Warning: Reference `LastPage' on page 10 undefined on input line 208.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[10
 
 ] 
 enddocument/afterlastpage: lastpage setting LastPage.
@@ -552,33 +519,29 @@ L3 programming layer <2024-01-22>
  ***********
 
 
-LaTeX Warning: There were undefined references.
-
-
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-
-Package lastpage Warning: Rerun to get the references right on input line 208.
 
  ) 
 Here is how much of TeX's memory you used:
- 7038 strings out of 476120
- 113417 string characters out of 5793657
- 1939975 words of memory out of 5000000
- 28970 multiletter control sequences out of 15000+600000
- 566832 words of font info for 70 fonts, out of 8000000 for 9000
+ 7045 strings out of 476120
+ 113542 string characters out of 5793657
+ 1949975 words of memory out of 5000000
+ 28975 multiletter control sequences out of 15000+600000
+ 567510 words of font info for 72 fonts, out of 8000000 for 9000
  40 hyphenation exceptions out of 8191
- 70i,12n,65p,305b,365s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on floyd_solution.pdf (11 pages, 82255 bytes).
+ 70i,12n,65p,401b,365s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ </home/viviana/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.6
+00pk> </home/viviana/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/tcbx120
+0.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share
+/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on floyd_solution.pdf (10 pages, 90408 bytes).
 PDF statistics:
- 73 PDF objects out of 1000 (max. 8388607)
- 45 compressed objects within 1 object stream
+ 80 PDF objects out of 1000 (max. 8388607)
+ 51 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 
